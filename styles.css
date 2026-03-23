@@ -403,8 +403,22 @@ body.dark-mode .attr-item.lacked { background: #3a1010; color: #ef5350; }
   .mob-ch-btn:hover { background: var(--bg-hover); }
   .mob-ch-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-  /* Toolbar compact on mobile */
-  .highlight-toolbar { padding: 0.2rem 0.4rem; }
+  /* Toolbar hidden on mobile by default — toggled by Mark Up button */
+  .highlight-toolbar {
+    display: none !important;
+    position: fixed !important;
+    bottom: 48px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 510 !important;
+    padding: 0.5rem !important;
+    border-radius: 12px 12px 0 0 !important;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.25) !important;
+    max-height: 45vh;
+    overflow-y: auto;
+    border-top: 2px solid var(--accent);
+  }
+  .highlight-toolbar.mob-toolbar-open { display: block !important; }
   .hl-row { gap: 0.2rem; }
   .hl-mode-toggle, .hl-eraser-toggle { font-size: 0.58rem; padding: 0.15rem 0.3rem; }
   .hl-decode-btn { font-size: 0.58rem; padding: 0.15rem 0.3rem; }

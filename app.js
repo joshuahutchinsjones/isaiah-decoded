@@ -263,21 +263,10 @@ const MobileSheet = {
   },
 
   toggleToolbar() {
-    const overlay = document.getElementById('mobileToolbarOverlay');
-    if (!overlay) return;
+    const toolbar = document.getElementById('highlightToolbar');
+    if (!toolbar) return;
     this.toolbarOpen = !this.toolbarOpen;
-    overlay.style.display = this.toolbarOpen ? 'block' : 'none';
-
-    // Clone toolbar content into mobile overlay
-    if (this.toolbarOpen) {
-      const source = document.getElementById('highlightToolbar');
-      const target = document.getElementById('mobileToolbarContent');
-      if (source && target) {
-        target.innerHTML = source.innerHTML;
-        // Re-bind events by re-building toolbar
-        // Simpler: just show the actual toolbar inline
-      }
-    }
+    toolbar.classList.toggle('mob-toolbar-open', this.toolbarOpen);
   }
 };
 

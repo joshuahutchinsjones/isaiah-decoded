@@ -126,8 +126,15 @@ const Decoder = {
   // Toggle decode mode on/off
   toggle() {
     this.active = !this.active;
+    // Update desktop button
     const btn = document.getElementById('decodeToggle');
     if (btn) btn.classList.toggle('active', this.active);
+    // Update mobile button
+    const mobBtn = document.getElementById('mobDecodeBtn');
+    if (mobBtn) {
+      mobBtn.style.background = this.active ? '#ff6f00' : '';
+      mobBtn.style.color = this.active ? '#fff' : '';
+    }
     // Re-render current chapter
     if (typeof Concordance !== 'undefined') {
       Concordance.showChapter(Concordance.currentChapter);

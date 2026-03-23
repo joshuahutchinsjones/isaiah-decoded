@@ -184,8 +184,10 @@
 
   <!-- Mobile bottom bar -->
   <div id="mobileBottomBar" style="display:none;">
-    <button class="mob-bar-btn mob-bar-main" onclick="MobileSheet.snapTo('half')" title="Open study panel">&#9776; Study Tools</button>
-    <button class="mob-bar-btn" onclick="MobileSheet.toggleToolbar()" title="Highlight & markup tools">&#x1F3A8; Mark Up</button>
+    <button class="mob-bar-btn mob-bar-main" onclick="MobileSheet.snapTo('half')" title="Open study panel">&#9776; Study</button>
+    <button class="mob-bar-btn" onclick="Decoder.toggle()" id="mobDecodeBtn" title="Toggle decode mode">Decode</button>
+    <button class="mob-bar-btn" onclick="MobileSheet.snapTo('half');setTimeout(()=>switchSidebarTab('groups'),100)" title="Word groups">Groups</button>
+    <button class="mob-bar-btn" onclick="MobileSheet.toggleToolbar()" title="Highlight & markup tools">&#x1F3A8;</button>
   </div>
 
   <!-- Mobile toolbar overlay -->
