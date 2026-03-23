@@ -11,6 +11,7 @@ window.RECIPES = [
   // LOW CARB
   { id:'b-egg-cups', name:'Turkey Spinach Egg Cups', meal:'breakfast', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto','mediterranean','lowfodmap'],
     servings:6, prepTime:10, cookTime:25,
     per:{ cal:210, p:22, c:3, f:12, fiber:1 },
     ingredients:[
@@ -32,6 +33,7 @@ window.RECIPES = [
 
   { id:'b-avo-scramble', name:'Avocado Bacon Egg Scramble', meal:'breakfast', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:false,
+    diets:['antiinflam','aip','paleo','whole30','keto','lowfodmap'],
     servings:1, prepTime:5, cookTime:8,
     per:{ cal:380, p:20, c:6, f:30, fiber:4 },
     ingredients:[
@@ -50,6 +52,7 @@ window.RECIPES = [
 
   { id:'b-coco-parfait', name:'Coconut Yogurt Seed Parfait', meal:'breakfast', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto','lowfodmap'],
     servings:1, prepTime:5, cookTime:0,
     per:{ cal:250, p:8, c:10, f:20, fiber:5 },
     ingredients:[
@@ -68,6 +71,7 @@ window.RECIPES = [
   // MODERATE CARB
   { id:'b-sp-hash', name:'Sweet Potato Turkey Breakfast Hash', meal:'breakfast', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:4, prepTime:10, cookTime:20,
     per:{ cal:320, p:24, c:28, f:12, fiber:4 },
     ingredients:[
@@ -92,6 +96,7 @@ window.RECIPES = [
 
   { id:'b-chia-pudding', name:'Coconut Chia Berry Pudding', meal:'breakfast', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','lowfodmap'],
     servings:4, prepTime:10, cookTime:0,
     per:{ cal:280, p:8, c:24, f:16, fiber:10 },
     ingredients:[
@@ -111,6 +116,7 @@ window.RECIPES = [
 
   { id:'b-banana-pancakes', name:'Banana Cassava Pancakes', meal:'breakfast', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:4, prepTime:10, cookTime:15,
     per:{ cal:300, p:10, c:38, f:12, fiber:3 },
     ingredients:[
@@ -134,6 +140,7 @@ window.RECIPES = [
   // HIGH CARB
   { id:'b-sp-bowl', name:'Sweet Potato Breakfast Bowl', meal:'breakfast', carbLevel:'high',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:4, prepTime:10, cookTime:30,
     per:{ cal:400, p:22, c:48, f:14, fiber:6 },
     ingredients:[
@@ -156,6 +163,7 @@ window.RECIPES = [
 
   { id:'b-plantain-pancakes', name:'Plantain Pancakes with Berry Compote', meal:'breakfast', carbLevel:'high',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','lowfodmap'],
     servings:4, prepTime:10, cookTime:15,
     per:{ cal:380, p:12, c:52, f:14, fiber:4 },
     ingredients:[
@@ -180,6 +188,7 @@ window.RECIPES = [
   // LOW CARB
   { id:'l-salmon-wraps', name:'Salmon Avocado Lettuce Wraps', meal:'lunch', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto','mediterranean','lowfodmap'],
     servings:4, prepTime:15, cookTime:12,
     per:{ cal:340, p:30, c:6, f:22, fiber:4 },
     ingredients:[
@@ -202,6 +211,7 @@ window.RECIPES = [
 
   { id:'l-meatball-soup', name:'Turkey Meatball Zoodle Soup', meal:'lunch', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto'],
     servings:6, prepTime:15, cookTime:25,
     per:{ cal:280, p:28, c:8, f:14, fiber:2 },
     ingredients:[
@@ -228,6 +238,7 @@ window.RECIPES = [
 
   { id:'l-chicken-salad', name:'Anti-Inflammatory Chicken Salad', meal:'lunch', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto','mediterranean','lowfodmap'],
     servings:4, prepTime:15, cookTime:20,
     per:{ cal:310, p:32, c:8, f:16, fiber:3 },
     ingredients:[
@@ -252,6 +263,7 @@ window.RECIPES = [
   // MODERATE CARB
   { id:'l-sp-chili', name:'Sweet Potato Turkey Chili', meal:'lunch', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:6, prepTime:15, cookTime:35,
     per:{ cal:350, p:28, c:30, f:12, fiber:6 },
     ingredients:[
@@ -277,6 +289,7 @@ window.RECIPES = [
 
   { id:'l-stir-fry', name:'Ginger Chicken Cauliflower Rice Bowl', meal:'lunch', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:4, prepTime:15, cookTime:15,
     per:{ cal:330, p:30, c:22, f:14, fiber:4 },
     ingredients:[
@@ -301,6 +314,7 @@ window.RECIPES = [
 
   { id:'l-tuna-cakes', name:'Tuna Sweet Potato Cakes', meal:'lunch', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','mediterranean','lowfodmap'],
     servings:4, prepTime:15, cookTime:20,
     per:{ cal:300, p:28, c:24, f:10, fiber:3 },
     ingredients:[
@@ -325,6 +339,7 @@ window.RECIPES = [
   // HIGH CARB
   { id:'l-stuffed-sp', name:'Turkey Stuffed Sweet Potatoes', meal:'lunch', carbLevel:'high',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:4, prepTime:10, cookTime:40,
     per:{ cal:420, p:30, c:48, f:12, fiber:7 },
     ingredients:[
@@ -348,6 +363,7 @@ window.RECIPES = [
 
   { id:'l-chicken-plantain', name:'Chicken Plantain Rice Bowl', meal:'lunch', carbLevel:'high',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','lowfodmap'],
     servings:4, prepTime:10, cookTime:25,
     per:{ cal:440, p:32, c:50, f:12, fiber:4 },
     ingredients:[
@@ -375,6 +391,7 @@ window.RECIPES = [
   // LOW CARB
   { id:'d-herb-salmon', name:'Herb Crusted Salmon with Roasted Broccoli', meal:'dinner', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto','mediterranean'],
     servings:4, prepTime:10, cookTime:18,
     per:{ cal:360, p:34, c:8, f:22, fiber:3 },
     ingredients:[
@@ -398,6 +415,7 @@ window.RECIPES = [
 
   { id:'d-lemon-chicken', name:'Lemon Herb Chicken with Roasted Vegetables', meal:'dinner', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto','mediterranean'],
     servings:4, prepTime:15, cookTime:25,
     per:{ cal:340, p:36, c:10, f:16, fiber:3 },
     ingredients:[
@@ -422,6 +440,7 @@ window.RECIPES = [
 
   { id:'d-turkey-boats', name:'Turkey Zucchini Boats', meal:'dinner', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto'],
     servings:4, prepTime:15, cookTime:25,
     per:{ cal:290, p:30, c:10, f:14, fiber:3 },
     ingredients:[
@@ -447,6 +466,7 @@ window.RECIPES = [
   // MODERATE CARB
   { id:'d-coconut-curry', name:'Chicken Sweet Potato Coconut Curry', meal:'dinner', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:6, prepTime:15, cookTime:30,
     per:{ cal:380, p:28, c:28, f:18, fiber:4 },
     ingredients:[
@@ -474,6 +494,7 @@ window.RECIPES = [
 
   { id:'d-turkey-meatloaf', name:'Turkey Meatloaf with Mashed Sweet Potato', meal:'dinner', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:6, prepTime:15, cookTime:40,
     per:{ cal:360, p:28, c:30, f:14, fiber:4 },
     ingredients:[
@@ -498,6 +519,7 @@ window.RECIPES = [
 
   { id:'d-salmon-root-veg', name:'Salmon with Root Vegetable Medley', meal:'dinner', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','mediterranean','lowfodmap'],
     servings:4, prepTime:10, cookTime:25,
     per:{ cal:400, p:32, c:28, f:18, fiber:5 },
     ingredients:[
@@ -523,6 +545,7 @@ window.RECIPES = [
   // HIGH CARB
   { id:'d-sp-stew', name:'Chicken Sweet Potato Stew', meal:'dinner', carbLevel:'high',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:6, prepTime:15, cookTime:35,
     per:{ cal:420, p:30, c:46, f:12, fiber:6 },
     ingredients:[
@@ -549,6 +572,7 @@ window.RECIPES = [
 
   { id:'d-fish-tacos', name:'Wild Fish Tacos (Cassava Tortillas)', meal:'dinner', carbLevel:'high',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','mediterranean','lowfodmap'],
     servings:4, prepTime:15, cookTime:15,
     per:{ cal:440, p:30, c:44, f:16, fiber:4 },
     ingredients:[
@@ -577,6 +601,7 @@ window.RECIPES = [
   // LOW CARB
   { id:'s-celery-butter', name:'Celery with Sunflower Seed Butter', meal:'snack', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto','lowfodmap'],
     servings:1, prepTime:2, cookTime:0,
     per:{ cal:200, p:6, c:8, f:16, fiber:3 },
     ingredients:[
@@ -587,6 +612,7 @@ window.RECIPES = [
 
   { id:'s-fat-bombs', name:'Coconut Collagen Fat Bombs', meal:'snack', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto','lowfodmap'],
     servings:12, prepTime:15, cookTime:0,
     per:{ cal:120, p:4, c:3, f:10, fiber:1 },
     ingredients:[
@@ -606,6 +632,7 @@ window.RECIPES = [
 
   { id:'s-jerky-olives', name:'Clean Beef Jerky with Olives', meal:'snack', carbLevel:'low',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','keto','lowfodmap'],
     servings:1, prepTime:2, cookTime:0,
     per:{ cal:180, p:14, c:4, f:12, fiber:1 },
     ingredients:[
@@ -617,6 +644,7 @@ window.RECIPES = [
   // MODERATE CARB
   { id:'s-apple-butter', name:'Apple Slices with Coconut Butter', meal:'snack', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:1, prepTime:3, cookTime:0,
     per:{ cal:220, p:2, c:22, f:14, fiber:4 },
     ingredients:[
@@ -628,6 +656,7 @@ window.RECIPES = [
 
   { id:'s-energy-balls', name:'Collagen Energy Balls', meal:'snack', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:12, prepTime:15, cookTime:0,
     per:{ cal:130, p:5, c:16, f:6, fiber:2 },
     ingredients:[
@@ -647,6 +676,7 @@ window.RECIPES = [
 
   { id:'s-plantain-guac', name:'Plantain Chips with Guacamole', meal:'snack', carbLevel:'moderate',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','lowfodmap'],
     servings:2, prepTime:10, cookTime:15,
     per:{ cal:240, p:3, c:26, f:14, fiber:5 },
     ingredients:[
@@ -667,6 +697,7 @@ window.RECIPES = [
   // HIGH CARB
   { id:'s-sp-fries', name:'Baked Sweet Potato Fries', meal:'snack', carbLevel:'high',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30','lowfodmap'],
     servings:2, prepTime:10, cookTime:25,
     per:{ cal:200, p:2, c:34, f:6, fiber:4 },
     ingredients:[
@@ -686,6 +717,7 @@ window.RECIPES = [
 
   { id:'s-banana-bites', name:'Banana Coconut Bites', meal:'snack', carbLevel:'high',
     aipFriendly:true, antiInflammatory:true, prepFriendly:true,
+    diets:['antiinflam','aip','paleo','whole30'],
     servings:2, prepTime:5, cookTime:0,
     per:{ cal:190, p:3, c:30, f:8, fiber:3 },
     ingredients:[
@@ -699,5 +731,80 @@ window.RECIPES = [
       'Drizzle with warmed coconut butter.',
       'Sprinkle coconut flakes and cinnamon.',
       'Freeze for frozen bites or eat fresh.'
-    ]}
+    ]},
+
+  /* ── CARNIVORE RECIPES ─────────────────────────────── */
+
+  { id:'c-b-steak-eggs', name:'Steak & Eggs', meal:'breakfast', carbLevel:'low',
+    aipFriendly:false, antiInflammatory:false, prepFriendly:false,
+    diets:['carnivore','keto'],
+    servings:1, prepTime:5, cookTime:10,
+    per:{ cal:450, p:40, c:0, f:30, fiber:0 },
+    ingredients:[
+      {name:'ribeye steak',amount:6,unit:'oz',cat:'protein'},
+      {name:'eggs',amount:3,unit:'large',cat:'refrigerated'},
+      {name:'grass-fed butter',amount:1,unit:'tbsp',cat:'refrigerated'},
+      {name:'sea salt',amount:0.25,unit:'tsp',cat:'pantry'}
+    ],
+    instructions:['Season steak with salt. Sear in butter 3-4 min each side.','Fry eggs in the same pan.','Serve together.']},
+
+  { id:'c-l-burger-patties', name:'Bunless Burger Patties', meal:'lunch', carbLevel:'low',
+    aipFriendly:false, antiInflammatory:false, prepFriendly:true,
+    diets:['carnivore','keto'],
+    servings:4, prepTime:5, cookTime:12,
+    per:{ cal:350, p:30, c:0, f:25, fiber:0 },
+    ingredients:[
+      {name:'ground beef (80/20)',amount:1.5,unit:'lbs',cat:'protein'},
+      {name:'sea salt',amount:1,unit:'tsp',cat:'pantry'},
+      {name:'grass-fed butter',amount:2,unit:'tbsp',cat:'refrigerated'}
+    ],
+    instructions:['Form beef into 4 patties. Season with salt.','Cook in butter 5-6 min each side.','Store in fridge 5 days.']},
+
+  { id:'c-d-ribeye', name:'Reverse Sear Ribeye', meal:'dinner', carbLevel:'low',
+    aipFriendly:false, antiInflammatory:false, prepFriendly:false,
+    diets:['carnivore','keto'],
+    servings:1, prepTime:5, cookTime:25,
+    per:{ cal:500, p:42, c:0, f:36, fiber:0 },
+    ingredients:[
+      {name:'ribeye steak',amount:10,unit:'oz',cat:'protein'},
+      {name:'grass-fed butter',amount:1,unit:'tbsp',cat:'refrigerated'},
+      {name:'sea salt',amount:0.5,unit:'tsp',cat:'pantry'}
+    ],
+    instructions:['Season steak. Bake at 250F on rack for 20 min until internal 115F.','Sear in ripping hot cast iron with butter 1 min each side.','Rest 5 min.']},
+
+  { id:'c-s-jerky', name:'Homemade Beef Jerky', meal:'snack', carbLevel:'low',
+    aipFriendly:false, antiInflammatory:false, prepFriendly:true,
+    diets:['carnivore','keto','paleo','whole30'],
+    servings:6, prepTime:15, cookTime:240,
+    per:{ cal:120, p:18, c:0, f:5, fiber:0 },
+    ingredients:[
+      {name:'beef eye of round',amount:2,unit:'lbs',cat:'protein'},
+      {name:'sea salt',amount:1,unit:'tsp',cat:'pantry'}
+    ],
+    instructions:['Slice beef very thin against the grain.','Season with salt.','Dehydrate at 160F for 4 hours or use oven at lowest setting with door cracked.']},
+
+  { id:'c-b-bacon-liver', name:'Bacon Wrapped Liver Bites', meal:'breakfast', carbLevel:'low',
+    aipFriendly:false, antiInflammatory:false, prepFriendly:true,
+    diets:['carnivore','keto'],
+    servings:4, prepTime:10, cookTime:15,
+    per:{ cal:280, p:24, c:2, f:18, fiber:0 },
+    ingredients:[
+      {name:'beef liver',amount:0.5,unit:'lbs',cat:'protein'},
+      {name:'uncured bacon',amount:8,unit:'slices',cat:'protein'},
+      {name:'sea salt',amount:0.25,unit:'tsp',cat:'pantry'}
+    ],
+    instructions:['Cut liver into 1-inch cubes. Season with salt.','Wrap each cube in half a bacon slice, secure with toothpick.','Bake at 400F 12-15 min until bacon crispy.','Store in fridge 4 days.']},
+
+  { id:'c-d-lamb-chops', name:'Herb Butter Lamb Chops', meal:'dinner', carbLevel:'low',
+    aipFriendly:false, antiInflammatory:false, prepFriendly:false,
+    diets:['carnivore','keto','paleo'],
+    servings:2, prepTime:5, cookTime:10,
+    per:{ cal:420, p:35, c:0, f:30, fiber:0 },
+    ingredients:[
+      {name:'lamb loin chops',amount:4,unit:'whole',cat:'protein'},
+      {name:'grass-fed butter',amount:2,unit:'tbsp',cat:'refrigerated'},
+      {name:'fresh rosemary',amount:1,unit:'tbsp',cat:'produce'},
+      {name:'sea salt',amount:0.5,unit:'tsp',cat:'pantry'}
+    ],
+    instructions:['Season chops with salt.','Sear in hot pan 3-4 min each side.','Add butter and rosemary, baste for 30 seconds.','Rest 3 min.']}
 ];

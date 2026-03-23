@@ -242,6 +242,25 @@ const App = {
       </div>
 
       <div class="card">
+        <div class="card-title"><span class="icon">🍽️</span> Diet Preference</div>
+        <p style="font-size:12px;color:var(--text-light);margin-bottom:10px;">Choose your eating style. Meals will be customized to match.</p>
+        <div class="toggle-group" data-field="diet" style="flex-wrap:wrap;">
+          ${[
+            {v:'antiinflam', label:'🌿 Anti-Inflammatory'},
+            {v:'aip', label:'🛡️ AIP (Autoimmune)'},
+            {v:'keto', label:'🥑 Keto'},
+            {v:'carnivore', label:'🥩 Carnivore'},
+            {v:'paleo', label:'🦴 Paleo'},
+            {v:'whole30', label:'🍎 Whole30'},
+            {v:'mediterranean', label:'🫒 Mediterranean'},
+            {v:'lowfodmap', label:'🫧 Low FODMAP'}
+          ].map(d =>
+            `<button class="toggle-btn ${p.diet === d.v ? 'active' : ''}" data-val="${d.v}">${d.label}</button>`
+          ).join('')}
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card-title"><span class="icon">🏃‍♀️</span> Activity Level</div>
         <div class="toggle-group" data-field="activityLevel">
           ${['sedentary','light','moderate','active'].map(v =>
@@ -370,6 +389,7 @@ const App = {
       height: parseInt(get('prof-height')) || 64,
       weight: parseFloat(get('prof-weight')) || 150,
       goalWeight: parseFloat(get('prof-goal-weight')) || 135,
+      diet: getToggle('diet') || 'antiinflam',
       activityLevel: getToggle('activityLevel') || 'light',
       goals: [...document.querySelectorAll('#goalGroup .toggle-btn.active')].map(b => b.dataset.val),
       goal: [...document.querySelectorAll('#goalGroup .toggle-btn.active')].map(b => b.dataset.val).includes('lose') ? 'lose'

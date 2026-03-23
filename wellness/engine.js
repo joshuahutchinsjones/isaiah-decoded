@@ -62,7 +62,7 @@ const Engine = {
     window.WEEKLY_SCHEDULE.forEach((dayInfo, i) => {
       const carbLevel = dayInfo.carbLevel;
       const macros = this.getMacros(cals, carbLevel);
-      const meals = this.pickMeals(carbLevel, macros, profile._disliked || [], profile._liked || []);
+      const meals = this.pickMeals(carbLevel, macros, profile._disliked || [], profile._liked || [], profile.diet || 'antiinflam');
       const workout = window.WORKOUTS.find(w => w.id === dayInfo.workout);
 
       // Scale portions to match target calories
@@ -100,8 +100,13 @@ const Engine = {
     return plan;
   },
 
-  pickMeals(carbLevel, targetMacros, disliked, liked) {
-    const recipes = window.RECIPES.filter(r => !disliked.includes(r.id));
+  pickMeals(carbLevel, targetMacros, disliked, liked, diet) {
+    let recipes = window.RECIPES.filter(r => !disliked.includes(r.id));
+    // Filter by diet preference
+    if (diet && diet !== 'all') {
+      const dietFiltered = recipes.filter(r => r.diets && r.diets.includes(diet));
+      if (dietFiltered.length >= 4) recipes = dietFiltered; // Only filter if enough recipes exist
+    }
     const pick = (meal, level) => {
       let pool = recipes.filter(r => r.meal === meal && r.carbLevel === level);
       if (pool.length === 0) {
