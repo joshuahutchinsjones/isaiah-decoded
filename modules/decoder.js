@@ -26,31 +26,67 @@ const Decoder = {
     // Skip common English words that happen to be in term names
     const skip = new Set(['the','of','in','and','a','an','too','short','from','east','fat','things','upon','many','sure','one','prey','hand','out','that']);
 
-    for (const [key, entry] of Object.entries(CODE_WORDS)) {
-      // Use the first short decoded phrase
-      let decoded = entry.decoded.split('—')[0].trim();
-      if (decoded.length > 50) decoded = decoded.split(',')[0].trim();
-      if (decoded.length > 50) decoded = decoded.substring(0, 47) + '...';
+    // Direct mapping: key word → short decoded meaning
+    const directMap = {
+      'babylon': 'worldly system / spiritual captivity',
+      'babel': 'worldly system / spiritual captivity',
+      'assyria': 'end-time military superpower',
+      'assyrian': 'end-time military superpower',
+      'zion': 'covenant people / pure in heart',
+      'jerusalem': 'Salt Lake City',
+      'judah': 'Utah',
+      'ephraim': 'wayward covenant people',
+      'egypt': 'worldly power / false security',
+      'edom': 'those who sold their birthright',
+      'moab': 'people near the covenant but outside it',
+      'ariel': 'Jerusalem / altar hearth of God',
+      'leviathan': 'Satan / anti-God forces',
+      'seraphim': 'burning ones / divine agents',
+      'seraphims': 'burning ones / divine agents',
+      'furnace': 'refining through affliction',
+      'babylon': 'worldly system / spiritual captivity',
+      'arm': 'God\'s servant / covenant power',
+      'banner': 'rallying point / restored gospel',
+      'ensign': 'rallying point / restored gospel',
+      'branch': 'messianic / Davidic king',
+      'cornerstone': 'Christ / foundation of Zion',
+      'servant': 'end-time agent of God',
+      'remnant': 'faithful survivors',
+      'highway': 'covenant path of return',
+      'vineyard': 'house of Israel',
+      'watchman': 'prophets / seers',
+      'wilderness': 'exile / testing / transformation',
+      'darkness': 'apostasy / spiritual blindness',
+      'light': 'truth / Christ / revelation',
+      'fire': 'purification / judgment',
+      'garments': 'covenants / righteousness',
+      'mountain': 'nation / government / power',
+      'mountains': 'nations / governments',
+      'islands': 'distant nations / Americas',
+      'isles': 'distant nations / Americas',
+      'sword': 'divine word / judgment',
+      'rock': 'Christ / foundation',
+      'nursing': 'Gentile kings/queens who nurture Israel',
+      'lion': 'powerful entity / the Lord',
+      'lamb': 'Christ / meekness / sacrifice',
+      'eagle': 'divine renewal',
+      'eagles': 'divine renewal',
+      'throne': 'God\'s authority',
+      'crown': 'authority / rulership',
+      'key': 'priesthood authority',
+      'nail': 'servant fastened by God',
+      'trumpet': 'prophetic warning / gathering call',
+      'feast': 'millennial blessings / gospel fullness',
+      'dross': 'sin / impurity',
+      'chaff': 'the wicked',
+      'cedar': 'proud leaders brought low',
+      'cedars': 'proud leaders brought low'
+    };
 
-      // Only use the primary key word (the dictionary key), not all words in the term name
-      const primaryWord = key.replace(/-/g, '');
-      if (primaryWord.length > 2 && !skip.has(primaryWord)) {
-        this.builtinWords[primaryWord] = decoded;
+    for (const [word, meaning] of Object.entries(directMap)) {
+      if (!skip.has(word)) {
+        this.builtinWords[word] = meaning;
       }
-
-      // Also add specific important multi-word entries by their most recognizable word
-      const term = entry.term.toLowerCase();
-      if (term.includes('babylon')) this.builtinWords['babylon'] = decoded;
-      if (term.includes('assyria')) { this.builtinWords['assyria'] = decoded; this.builtinWords['assyrian'] = decoded; }
-      if (term.includes('zion')) this.builtinWords['zion'] = decoded;
-      if (term.includes('jerusalem')) this.builtinWords['jerusalem'] = decoded;
-      if (term.includes('judah')) this.builtinWords['judah'] = decoded;
-      if (term.includes('ephraim')) this.builtinWords['ephraim'] = decoded;
-      if (term.includes('egypt')) this.builtinWords['egypt'] = decoded;
-      if (term.includes('edom')) this.builtinWords['edom'] = decoded;
-      if (term.includes('moab')) this.builtinWords['moab'] = decoded;
-      if (term.includes('leviathan')) this.builtinWords['leviathan'] = decoded;
-      if (term.includes('seraphim')) { this.builtinWords['seraphim'] = decoded; this.builtinWords['seraphims'] = decoded; }
     }
   },
 
