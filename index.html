@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isaiah Decoded - Interactive Study Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1>Isaiah Decoded</h1>
+    </div>
+    <div class="header-center">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search word or code word..." autocomplete="off">
+        <button id="searchBtn" title="Search">&#x1F50D;</button>
+        <button id="clearSearchBtn" title="Clear" class="clear-btn">&times;</button>
+      </div>
+    </div>
+    <div class="header-right">
+      <label class="toggle-label"><input type="checkbox" id="hideCommonWords"> Hide common</label>
+      <button id="darkModeBtn" title="Toggle dark mode">&#x263E;</button>
+    </div>
+  </header>
+
+  <nav class="tab-bar">
+    <button class="tab-btn active" data-tab="start">Start Here</button>
+    <button class="tab-btn" data-tab="study">Read & Study</button>
+    <button class="tab-btn" data-tab="keys">The Keys</button>
+    <button class="tab-btn" data-tab="ascent">The Ascent</button>
+    <button class="tab-btn" data-tab="deep">Deep Studies</button>
+    <button class="tab-btn" data-tab="codewords">My Code Words</button>
+  </nav>
+
+  <!-- ===== TAB 1: START HERE ===== -->
+  <div class="tab-content" id="tab-start">
+    <div class="start-container">
+      <div class="welcome-hero">
+        <h2>Isaiah is not a sealed book. Here is how to open it.</h2>
+        <p>Avraham Gileadi's typological framework reveals that Isaiah wrote in layers of symbolic code — and that his message is for <em>our day</em>. The keys below will transform Isaiah from an impenetrable ancient text into a living message addressed directly to you.</p>
+      </div>
+
+      <div class="path-cards">
+        <a href="#keys/decoder" class="path-card">
+          <div class="pc-number">1</div>
+          <div class="pc-title">Learn the Code Words</div>
+          <div class="pc-desc">Isaiah wrote in symbolic language. "Babylon" = worldliness. "Arm of the Lord" = God's servant. Learn the cipher and the text transforms.</div>
+        </a>
+        <a href="#keys/master" class="path-card highlight-card">
+          <div class="pc-number">2</div>
+          <div class="pc-title">Read the Master Key</div>
+          <div class="pc-desc">1 Nephi 20-21 (Isaiah 48-49) is the key that opens everything. Nephi chose these chapters first for a reason. Start here.</div>
+        </a>
+        <a href="#study" class="path-card">
+          <div class="pc-number">3</div>
+          <div class="pc-title">Climb the Ladder</div>
+          <div class="pc-desc">Isaiah's 7-rung ladder reveals the path from Perdition to God's presence. Read, click, cross-reference, and ascend.</div>
+        </a>
+      </div>
+
+      <h3 class="section-title">Isaiah's Ladder to Heaven</h3>
+      <p class="section-desc">Click any rung to explore its attributes, key verses, and self-reflection questions.</p>
+      <div id="ladderContainer"></div>
+
+      <div class="reading-order">
+        <h3 class="section-title">Suggested Reading Order</h3>
+        <ol>
+          <li><a href="#study/ch/48"><strong>Isaiah 48-49</strong></a> — The Master Key (read with <a href="#keys/master">1 Nephi 20-21 annotations</a>)</li>
+          <li><a href="#study/ch/1"><strong>Isaiah 1 and 6</strong></a> — The indictment and the throne vision</li>
+          <li><a href="#study/ch/53"><strong>Isaiah 53</strong></a> — The suffering Servant / Atonement</li>
+          <li><a href="#study/ch/48"><strong>The rest of Rung 5</strong></a> (Ch 48-54) — The Servant Songs and gathering</li>
+          <li><strong>Expand outward</strong> from Rung 5 — forward to Rungs 6-7, backward to Rungs 4-1</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: READ & STUDY ===== -->
+  <div class="tab-content" id="tab-study" style="display:none;">
+    <div class="study-layout">
+      <nav class="chapter-nav">
+        <div class="nav-header">Ch</div>
+        <div id="chapterList" class="chapter-list"></div>
+      </nav>
+      <main id="readingPanel" class="reading-panel">
+        <h2 id="chapterTitle" class="chapter-title">Isaiah 1</h2>
+        <div id="rungBadge" class="rung-badge" style="display:none;"></div>
+        <div id="versesContainer" class="verses-container"></div>
+        <div id="highlightToolbar" class="highlight-toolbar"></div>
+      </main>
+      <div class="sidebar-resize-handle" id="sidebarResizeHandle"></div>
+      <aside class="concordance-panel" id="concordancePanelAside">
+        <div class="sidebar-tabs">
+          <button class="sidebar-tab active" data-panel="concordance" onclick="switchSidebarTab('concordance')">Concordance</button>
+          <button class="sidebar-tab" data-panel="groups" onclick="switchSidebarTab('groups')">Groups</button>
+          <button class="sidebar-tab" data-panel="codewords" onclick="switchSidebarTab('codewords')">Code Words</button>
+        </div>
+        <div id="sidebarConcordance" class="sidebar-panel-content">
+          <div id="concordanceIntro" class="concordance-intro">
+            <p>Click any <strong>word</strong> to find every occurrence in Isaiah.</p>
+            <p>Click a <strong>verse number</strong> to see cross-references.</p>
+          </div>
+          <div id="concordanceResults" class="concordance-results" style="display:none;">
+            <div class="results-summary">
+              <span id="resultWord" class="result-word"></span>
+              <span id="resultCount" class="result-count"></span>
+            </div>
+            <div id="resultsList" class="results-list"></div>
+          </div>
+        </div>
+        <div id="sidebarGroups" class="sidebar-panel-content" style="display:none;">
+          <div id="grouperPanel" class="grouper-panel"></div>
+        </div>
+        <div id="sidebarCodeWords" class="sidebar-panel-content" style="display:none;">
+          <div id="sidebarCodeWordsContent"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: THE KEYS ===== -->
+  <div class="tab-content" id="tab-keys" style="display:none;">
+    <div class="keys-nav">
+      <button class="keys-btn active" data-section="master" onclick="showKeysSection('master')">The Master Key</button>
+      <button class="keys-btn" data-section="howto" onclick="showKeysSection('howto')">How to Read Isaiah</button>
+      <button class="keys-btn" data-section="kings" onclick="showKeysSection('kings')">Kings & Queens</button>
+      <button class="keys-btn" data-section="decoder" onclick="showKeysSection('decoder')">Code Words</button>
+      <button class="keys-btn" data-section="mynotes" onclick="showKeysSection('mynotes')">My Keys & Notes</button>
+    </div>
+    <div class="keys-content">
+      <div id="keys-master" class="keys-section"></div>
+      <div id="keys-howto" class="keys-section" style="display:none;"></div>
+      <div id="keys-kings" class="keys-section" style="display:none;"></div>
+      <div id="keys-decoder" class="keys-section" style="display:none;"></div>
+      <div id="keys-mynotes" class="keys-section" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: THE ASCENT ===== -->
+  <div class="tab-content" id="tab-ascent" style="display:none;">
+    <div class="ascent-container">
+      <h2 class="ascent-title">The Code of Spiritual Ascension</h2>
+      <p class="ascent-subtitle">Three parallel paths to the top of Isaiah's Ladder: the Covenant Path, the Beatitudes, and the Christlike Attributes of D&C 4:6. They are the same ascending path from different angles.</p>
+      <div id="ascentContainer"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 5: DEEP STUDIES ===== -->
+  <div class="tab-content" id="tab-deep" style="display:none;">
+    <div class="deep-container">
+      <h2 class="deep-title">Deep Studies</h2>
+      <p class="deep-subtitle">Thematic explorations of Isaiah's major teachings. Click to expand.</p>
+      <div id="studiesContainer"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 6: MY CODE WORDS ===== -->
+  <div class="tab-content" id="tab-codewords" style="display:none;">
+    <div class="codewords-container">
+      <h2 class="cw-title">My Code Words</h2>
+      <p class="cw-subtitle">Manage code word substitutions. When "Decode" is active in the Read & Study tab, these words are replaced in the scripture text with their decoded meanings. Custom entries override Gileadi defaults.</p>
+      <div id="codeWordsTabContent"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data/isaiah-data.js"></script>
+  <script src="data/code-words.js"></script>
+  <script src="data/ladder.js"></script>
+  <script src="data/ascent.js"></script>
+  <script src="data/kings-queens.js"></script>
+  <script src="data/cross-refs.js"></script>
+  <script src="data/studies.js"></script>
+  <script src="data/default-highlights.js"></script>
+  <script src="modules/tab-router.js"></script>
+  <script src="modules/concordance.js"></script>
+  <script src="modules/code-overlay.js"></script>
+  <script src="modules/ladder-viz.js"></script>
+  <script src="modules/ascent-viz.js"></script>
+  <script src="modules/study-renderer.js"></script>
+  <script src="modules/highlighter.js"></script>
+  <script src="modules/grouper.js"></script>
+  <script src="modules/decoder.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
