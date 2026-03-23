@@ -164,6 +164,18 @@ const Concordance = {
     this.renderVerses(num);
     if (this.selectedWord) this.highlightWord(this.selectedWord);
 
+    // Refresh group display for the new chapter
+    if (typeof Grouper !== 'undefined' && Grouper.active && Grouper.visible) {
+      Grouper.hideSvgLines();
+      Grouper.clearGroupHighlights();
+      if (Grouper.activeGroupId) {
+        setTimeout(() => {
+          Grouper.highlightGroupWords(Grouper.activeGroupId);
+          Grouper.showGroupLines(Grouper.activeGroupId);
+        }, 100);
+      }
+    }
+
     const panel = document.getElementById('readingPanel');
     if (panel) panel.scrollTop = 0;
   },
@@ -271,6 +283,9 @@ const Concordance = {
   },
 
   handleWordClick(e) {
+    // If in group mode, let the grouper handle it (don't do concordance)
+    if (typeof Grouper !== 'undefined' && Grouper.active) return;
+
     // If highlighter is in highlight/underline mode with a color, highlight the clicked word
     if (typeof Highlighter !== 'undefined' && Highlighter.initialized) {
       if (Highlighter.activeColor && !Highlighter.erasing && Highlighter.mode !== 'concordance') {
