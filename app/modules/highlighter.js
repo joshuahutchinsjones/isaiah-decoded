@@ -13,21 +13,24 @@ const Highlighter = {
   visible: true,     // toggle highlights on/off visually
 
   RUNG_COLORS: [
-    { key: 'rung-1', color: '#1A1A1A', label: 'Perdition',      icon: '\u2620' },  // skull — black/dark
-    { key: 'rung-2', color: '#CC5500', label: 'Babylon',        icon: '\u{1F3DB}' }, // classical building — burnt orange
-    { key: 'rung-3', color: '#808080', label: 'Jacob/Israel',   icon: '\u2721' },  // star of david — grey
-    { key: 'rung-4', color: '#228B22', label: 'Zion/Jerusalem', icon: '\u26F0' },  // mountain — green
-    { key: 'rung-5', color: '#E75480', label: 'Sons/Servants',  icon: '\u{1F9CE}' }, // kneeling person — pink
-    { key: 'rung-6', color: '#7B2D8E', label: 'Seraphs',        icon: '\u{1F525}' }, // fire — purple
-    { key: 'rung-7', color: '#E60000', label: 'Jehovah',        icon: '\u{1F451}' }  // crown — red
+    { key: 'sk-red',     color: '#E60000', label: 'Christ/Father',   icon: '\u2720' },  // cross — Christ, Father, Light of Christ, Word of God, Salvation
+    { key: 'sk-orange',  color: '#ED8A00', label: 'Women/Wisdom',    icon: '\u2640' },  // female sign — Women, Mother, Divine Feminine, Wisdom, Understanding
+    { key: 'sk-yellow',  color: '#D4B800', label: 'Time/Generic',    icon: '\u231B' },  // hourglass — Generic, Timing, Wilderness, Gentiles, Evidences
+    { key: 'sk-green',   color: '#228B22', label: 'Temple/Servant',  icon: '\u2618' },  // shamrock — Temple, Righteousness, Elias, Forerunner, Servant, Right Arm
+    { key: 'sk-ltblue',  color: '#5B9BD5', label: 'Evil/Wicked',     icon: '\u26A0' },  // warning — Evil, Bad, Curse, Sins, Iniquity, Wicked, Secret Combinations
+    { key: 'sk-dkblue',  color: '#1F4E79', label: 'Devil/Antichrist',icon: '\u{1F480}' }, // skull — Devil, Antichrist, Murder, Angels of Devil, Evil Spirits
+    { key: 'sk-purple',  color: '#7B2D8E', label: 'Angels/Kings',    icon: '\u{1F451}' }, // crown — Angels, Kings/Queens, Messengers, 144,000, Mysteries, Gifts
+    { key: 'sk-pink',    color: '#E75480', label: 'Holy Ghost',      icon: '\u{1F54A}' }, // dove — Holy Ghost, Holy Spirit of Promise, Spirit of Revelation
+    { key: 'sk-brown',   color: '#8B5E3C', label: 'Prophets/Earth',  icon: '\u{1F30D}' }, // globe — Prophets, Earth, Cities/Places, Groups of People, Records
+    { key: 'sk-grey',    color: '#808080', label: 'False Teachers',  icon: '\u{1F3AD}' }  // masks — False priests, false teachers, lukewarm, pharisees
   ],
 
   DEFAULT_CUSTOM: [
-    { key: 'custom-1', color: '#2196F3', label: 'Custom 1' },
-    { key: 'custom-2', color: '#4CAF50', label: 'Custom 2' },
-    { key: 'custom-3', color: '#FF9800', label: 'Custom 3' },
-    { key: 'custom-4', color: '#E91E63', label: 'Custom 4' },
-    { key: 'custom-5', color: '#00BCD4', label: 'Custom 5' }
+    { key: 'custom-1', color: '#00BCD4', label: 'Custom 1' },
+    { key: 'custom-2', color: '#795548', label: 'Custom 2' },
+    { key: 'custom-3', color: '#607D8B', label: 'Custom 3' },
+    { key: 'custom-4', color: '#FF5722', label: 'Custom 4' },
+    { key: 'custom-5', color: '#9C27B0', label: 'Custom 5' }
   ],
 
   customLabels: {},
