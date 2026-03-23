@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Glow Up - Your Wellness Journey</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+</head>
+<body>
+
+  <header class="app-header">
+    <h1>Glow Up</h1>
+    <div class="subtitle">Your Anti-Inflammatory Wellness Journey</div>
+  </header>
+
+  <nav class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="dashboard"><span class="tab-icon">🏠</span> Home</button>
+    <button class="tab-btn" data-tab="today"><span class="tab-icon">✅</span> Today</button>
+    <button class="tab-btn" data-tab="profile"><span class="tab-icon">👩</span> Profile</button>
+    <button class="tab-btn" data-tab="meals"><span class="tab-icon">🥗</span> Meals</button>
+    <button class="tab-btn" data-tab="grocery"><span class="tab-icon">🛒</span> Grocery</button>
+    <button class="tab-btn" data-tab="workouts"><span class="tab-icon">💪</span> Workouts</button>
+    <button class="tab-btn" data-tab="track"><span class="tab-icon">📊</span> Track</button>
+  </nav>
+
+  <!-- ═══════════ DASHBOARD ═══════════ -->
+  <section class="tab-content active" id="tab-dashboard"></section>
+
+  <!-- ═══════════ TODAY ═══════════ -->
+  <section class="tab-content" id="tab-today"></section>
+
+  <!-- ═══════════ CELEBRATION OVERLAY ═══════════ -->
+  <div class="celebration-overlay" id="celebrationOverlay">
+    <div class="celebration-content">
+      <div class="confetti-container" id="confetti"></div>
+      <div class="celebration-emoji">👑</div>
+      <h2 class="celebration-title">You crushed it today!</h2>
+      <p class="celebration-sub">100% complete — you're glowing, queen!</p>
+      <div class="celebration-xp" id="celebrationXP"></div>
+      <button class="btn btn-primary" onclick="App.closeCelebration()">💖 Thanks, babe!</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ PROFILE ═══════════ -->
+  <section class="tab-content" id="tab-profile"></section>
+
+  <!-- ═══════════ MEALS ═══════════ -->
+  <section class="tab-content" id="tab-meals"></section>
+
+  <!-- ═══════════ GROCERY ═══════════ -->
+  <section class="tab-content" id="tab-grocery"></section>
+
+  <!-- ═══════════ WORKOUTS ═══════════ -->
+  <section class="tab-content" id="tab-workouts"></section>
+
+  <!-- ═══════════ TRACK ═══════════ -->
+  <section class="tab-content" id="tab-track"></section>
+
+  <!-- ═══════════ RECIPE MODAL ═══════════ -->
+  <div class="modal-overlay" id="recipeModal">
+    <div class="modal" id="recipeModalBody"></div>
+  </div>
+
+  <script src="data/recipes.js"></script>
+  <script src="data/workouts.js"></script>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
