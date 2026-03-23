@@ -16,6 +16,9 @@ const App = {
     symptoms: [],
     currentTab: 'dashboard',
     dailyChecks: {},   // { 'YYYY-MM-DD': { taskId: true, ... } }
+    dislikedRecipes: [],  // recipe IDs the user thumbs-downed
+    likedRecipes: [],     // recipe IDs the user thumbs-upped
+    photoMeals: [],       // { date, photo (dataURL), items: [{name, cal, p, c, f}], totalCal }
     xp: 0,
     streak: 0,
     lastCompleteDate: null
@@ -245,14 +248,20 @@ const App = {
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="icon">🎯</span> Goal</div>
-        <div class="toggle-group" data-field="goal">
-          ${['lose','maintain','gain'].map(v =>
-            `<button class="toggle-btn ${p.goal === v ? 'active' : ''}" data-val="${v}">
-              ${v === 'lose' ? '📉 Lose Fat' : v === 'maintain' ? '⚖️ Maintain' : '💪 Build Muscle'}
-            </button>`
+        <div class="card-title"><span class="icon">🎯</span> Goals <span style="font-size:11px;font-weight:400;color:var(--text-light);">(select one or more)</span></div>
+        <div class="toggle-group multi-goal" id="goalGroup">
+          ${[
+            {v:'lose', label:'📉 Lose Fat'},
+            {v:'tone', label:'✨ Tone Up'},
+            {v:'muscle', label:'💪 Build Muscle'},
+            {v:'maintain', label:'⚖️ Maintain'},
+            {v:'energy', label:'⚡ More Energy'},
+            {v:'antiinflam', label:'🌿 Reduce Inflammation'}
+          ].map(g =>
+            `<button class="toggle-btn ${(p.goals || [p.goal]).includes(g.v) ? 'active' : ''}" data-val="${g.v}" onclick="App.toggleGoal(this)">${g.label}</button>`
           ).join('')}
         </div>
+        <div id="goalWarning" style="display:none;color:var(--rose);font-size:12px;margin-top:6px;font-weight:600;"></div>
       </div>
 
       <div class="card">
@@ -266,12 +275,21 @@ const App = {
       <div class="card">
         <div class="card-title"><span class="icon">🫀</span> Body Type</div>
         <div class="toggle-group" data-field="bodyType">
-          ${['ectomorph','mesomorph','endomorph'].map(v =>
+          ${['ectomorph','mesomorph','endomorph','auto'].map(v =>
             `<button class="toggle-btn ${p.bodyType === v ? 'active' : ''}" data-val="${v}">
-              ${v === 'ectomorph' ? '🦋 Ecto (slim)' : v === 'mesomorph' ? '⚡ Meso (athletic)' : '🧸 Endo (curvy)'}
+              ${v === 'ectomorph' ? '🦋 Ecto (slim)' : v === 'mesomorph' ? '⚡ Meso (athletic)' : v === 'endomorph' ? '🧸 Endo (curvy)' : '🔮 Not Sure'}
             </button>`
           ).join('')}
         </div>
+        ${p.bodyType === 'auto' && p._detectedBodyType ? `
+          <div style="margin-top:8px;padding:8px 12px;background:var(--lavender-light);border-radius:var(--radius-sm);font-size:12px;">
+            Based on your measurements: <strong>${p._detectedBodyType === 'ectomorph' ? '🦋 Ectomorph (slim build)' : p._detectedBodyType === 'mesomorph' ? '⚡ Mesomorph (athletic build)' : '🧸 Endomorph (curvy build)'}</strong>
+          </div>
+        ` : p.bodyType === 'auto' ? `
+          <div style="margin-top:8px;font-size:12px;color:var(--text-light);">
+            Log measurements in the Track tab and I'll figure out your body type! 📏
+          </div>
+        ` : ''}
       </div>
 
       <div class="card">
@@ -348,7 +366,9 @@ const App = {
       weight: parseFloat(get('prof-weight')) || 150,
       goalWeight: parseFloat(get('prof-goal-weight')) || 135,
       activityLevel: getToggle('activityLevel') || 'light',
-      goal: getToggle('goal') || 'lose',
+      goals: [...document.querySelectorAll('#goalGroup .toggle-btn.active')].map(b => b.dataset.val),
+      goal: [...document.querySelectorAll('#goalGroup .toggle-btn.active')].map(b => b.dataset.val).includes('lose') ? 'lose'
+        : [...document.querySelectorAll('#goalGroup .toggle-btn.active')].map(b => b.dataset.val).includes('muscle') ? 'gain' : 'maintain',
       breastfeeding: getToggle('breastfeeding') === 'true',
       bodyType: getToggle('bodyType') || 'mesomorph',
       sensitivities: [...document.querySelectorAll('.sensitivity-btn.active')].map(b => b.dataset.sid),
@@ -415,15 +435,23 @@ const App = {
               if (!meal) return '';
               const portionNote = meal._portionMult && meal._portionMult !== 1
                 ? `<div style="font-size:10px;color:var(--mint);font-weight:600;">${meal._portionMult}x serving</div>` : '';
+              const liked = this.state.likedRecipes.includes(meal.id);
+              const disliked = this.state.dislikedRecipes.includes(meal.id);
               return `<div class="meal-item">
                 <div style="flex:1;min-width:0;">
                   <div class="meal-label">${mealLabels[key]}</div>
                   <div class="meal-name" style="cursor:pointer" onclick="App.showRecipe('${meal.id}')">${meal.name}</div>
                   ${portionNote}
+                  <div class="meal-rating">
+                    <button class="rate-btn ${liked ? 'liked' : ''}" onclick="event.stopPropagation();App.rateMeal('${meal.id}','like')" title="Love it!">👍</button>
+                    <button class="rate-btn ${disliked ? 'disliked' : ''}" onclick="event.stopPropagation();App.rateMeal('${meal.id}','dislike',${i},'${key}')" title="Not for me">👎</button>
+                    ${liked ? '<span class="rate-tag loved">Fave!</span>' : ''}
+                    ${disliked ? '<span class="rate-tag nope">Won\'t repeat</span>' : ''}
+                  </div>
                 </div>
                 <div style="display:flex;align-items:center;gap:6px;">
                   <div class="meal-macros">${meal.per.cal} cal<br>${meal.per.p}p/${meal.per.c}c/${meal.per.f}f</div>
-                  <button class="swap-btn" onclick="App.swapMeal(${i},'${key}')" title="Swap meal">🔄</button>
+                  <button class="swap-btn" onclick="event.stopPropagation();App.swapMeal(${i},'${key}')" title="Swap meal">🔄</button>
                 </div>
               </div>`;
             }).join('')}
@@ -453,7 +481,11 @@ const App = {
       this.goToTab('profile');
       return;
     }
-    this.state.weekPlan = Engine.generateWeekPlan(this.state.profile);
+    const profileWithPrefs = Object.assign({}, this.state.profile, {
+      _disliked: this.state.dislikedRecipes || [],
+      _liked: this.state.likedRecipes || []
+    });
+    this.state.weekPlan = Engine.generateWeekPlan(profileWithPrefs);
     this.state.groceryList = Engine.generateGroceryList(this.state.weekPlan);
     this.state.groceryChecked = {};
     this.saveState();
@@ -464,14 +496,53 @@ const App = {
     const day = this.state.weekPlan[dayIndex];
     const current = day.meals[mealKey];
     if (!current) return;
+    const disliked = this.state.dislikedRecipes || [];
     const pool = window.RECIPES.filter(r =>
-      r.meal === current.meal && r.carbLevel === day.carbLevel && r.id !== current.id
+      r.meal === current.meal && r.carbLevel === day.carbLevel && r.id !== current.id && !disliked.includes(r.id)
     );
     if (pool.length === 0) return;
-    day.meals[mealKey] = pool[Math.floor(Math.random() * pool.length)];
+    // Prefer liked recipes
+    const liked = this.state.likedRecipes || [];
+    const likedPool = pool.filter(r => liked.includes(r.id));
+    const pick = likedPool.length > 0 && Math.random() > 0.4 ? likedPool : pool;
+    day.meals[mealKey] = pick[Math.floor(Math.random() * pick.length)];
     day.actualMacros = Engine.sumMacros(day.meals);
     this.state.groceryList = Engine.generateGroceryList(this.state.weekPlan);
     this.state.groceryChecked = {};
+    this.saveState();
+    this.renderMeals();
+  },
+
+  rateMeal(recipeId, action, dayIndex, mealKey) {
+    const liked = this.state.likedRecipes;
+    const disliked = this.state.dislikedRecipes;
+
+    if (action === 'like') {
+      // Toggle like
+      const idx = liked.indexOf(recipeId);
+      if (idx >= 0) { liked.splice(idx, 1); }
+      else {
+        liked.push(recipeId);
+        // Remove from disliked if it was there
+        const dIdx = disliked.indexOf(recipeId);
+        if (dIdx >= 0) disliked.splice(dIdx, 1);
+      }
+    } else {
+      // Toggle dislike
+      const idx = disliked.indexOf(recipeId);
+      if (idx >= 0) { disliked.splice(idx, 1); }
+      else {
+        disliked.push(recipeId);
+        // Remove from liked
+        const lIdx = liked.indexOf(recipeId);
+        if (lIdx >= 0) liked.splice(lIdx, 1);
+        // Auto-swap this meal out if in current plan
+        if (dayIndex !== undefined && mealKey) {
+          this.swapMeal(dayIndex, mealKey);
+          return; // swapMeal already saves and renders
+        }
+      }
+    }
     this.saveState();
     this.renderMeals();
   },
@@ -856,6 +927,9 @@ const App = {
       `;
     }
 
+    // Photo meal logger
+    html += this.renderPhotoMealSection();
+
     el.innerHTML = html;
 
     // Draw chart after DOM update
@@ -880,9 +954,13 @@ const App = {
 
     this.state.measurements.push(entry);
 
-    // Update profile weight
+    // Update profile weight and auto-detect body type
     if (this.state.profile) {
       this.state.profile.weight = entry.weight;
+      if (this.state.profile.bodyType === 'auto') {
+        const detected = this.detectBodyType(this.state.measurements);
+        if (detected) this.state.profile._detectedBodyType = detected;
+      }
     }
 
     this.saveState();
@@ -999,6 +1077,269 @@ const App = {
         ctx.fillText(label, x, h - 8);
       }
     });
+  },
+
+  /* ── GOAL VALIDATION ────────────────────────────────── */
+
+  toggleGoal(btn) {
+    btn.classList.toggle('active');
+    const active = [...document.querySelectorAll('#goalGroup .toggle-btn.active')].map(b => b.dataset.val);
+    const warn = document.getElementById('goalWarning');
+
+    // Logical conflicts
+    if (active.includes('lose') && active.includes('muscle')) {
+      warn.style.display = 'block';
+      warn.textContent = "⚠️ Losing fat and building muscle at the same time is very hard — consider 'Tone Up' instead, which does both gently!";
+    } else if (active.includes('lose') && active.includes('maintain')) {
+      warn.style.display = 'block';
+      warn.textContent = "⚠️ Can't lose fat and maintain weight — pick one!";
+      btn.classList.remove('active');
+    } else if (active.includes('muscle') && active.includes('maintain')) {
+      warn.style.display = 'block';
+      warn.textContent = "⚠️ Building muscle requires a surplus — can't maintain simultaneously!";
+      btn.classList.remove('active');
+    } else {
+      warn.style.display = 'none';
+    }
+  },
+
+  /* ── BODY TYPE AUTO-DETECTION ──────────────────────── */
+
+  detectBodyType(measurements) {
+    // Need at least shoulders, waist, hips
+    const latest = measurements[measurements.length - 1];
+    if (!latest) return null;
+
+    const shoulders = latest.shoulders;
+    const waist = latest.waist;
+    const hips = latest.hips;
+    if (!shoulders || !waist || !hips) return null;
+
+    const whRatio = waist / hips;
+    const shRatio = shoulders / hips;
+
+    // Ectomorph: narrow shoulders relative to hips, small waist
+    // Mesomorph: broad shoulders, small waist, medium hips
+    // Endomorph: wider hips, wider waist
+
+    if (shRatio > 1.05 && whRatio < 0.75) return 'mesomorph';
+    if (shRatio < 0.95 && whRatio < 0.72) return 'ectomorph';
+    if (whRatio > 0.80) return 'endomorph';
+    if (shRatio > 1.0) return 'mesomorph';
+    return 'mesomorph'; // default middle
+  },
+
+  /* ── PHOTO MEAL LOGGER ─────────────────────────────── */
+
+  FOOD_DB: [
+    {name:'Chicken Breast (4oz)',cal:180,p:35,c:0,f:4},
+    {name:'Salmon (4oz)',cal:230,p:25,c:0,f:14},
+    {name:'Ground Turkey (4oz)',cal:170,p:22,c:0,f:8},
+    {name:'Eggs (1 large)',cal:70,p:6,c:0,f:5},
+    {name:'Steak (4oz)',cal:250,p:28,c:0,f:15},
+    {name:'Shrimp (4oz)',cal:100,p:20,c:1,f:1},
+    {name:'Sweet Potato (1 medium)',cal:100,p:2,c:24,f:0},
+    {name:'White Rice (1 cup)',cal:200,p:4,c:44,f:0},
+    {name:'Brown Rice (1 cup)',cal:215,p:5,c:45,f:2},
+    {name:'Avocado (1/2)',cal:120,p:1,c:6,f:10},
+    {name:'Banana (1 medium)',cal:105,p:1,c:27,f:0},
+    {name:'Apple (1 medium)',cal:95,p:0,c:25,f:0},
+    {name:'Blueberries (1 cup)',cal:85,p:1,c:21,f:0},
+    {name:'Broccoli (1 cup)',cal:55,p:4,c:11,f:0},
+    {name:'Spinach (2 cups raw)',cal:14,p:2,c:2,f:0},
+    {name:'Kale (2 cups raw)',cal:16,p:2,c:2,f:0},
+    {name:'Carrots (1 cup)',cal:50,p:1,c:12,f:0},
+    {name:'Zucchini (1 cup)',cal:20,p:1,c:4,f:0},
+    {name:'Olive Oil (1 tbsp)',cal:120,p:0,c:0,f:14},
+    {name:'Coconut Oil (1 tbsp)',cal:120,p:0,c:0,f:14},
+    {name:'Avocado Oil (1 tbsp)',cal:120,p:0,c:0,f:14},
+    {name:'Almond Butter (2 tbsp)',cal:190,p:7,c:6,f:17},
+    {name:'Sunflower Seed Butter (2 tbsp)',cal:180,p:7,c:7,f:14},
+    {name:'Coconut Milk (1 cup)',cal:450,p:5,c:6,f:48},
+    {name:'Bone Broth (1 cup)',cal:40,p:8,c:1,f:0},
+    {name:'Cassava Tortilla (1)',cal:130,p:1,c:25,f:4},
+    {name:'Plantain (1 medium)',cal:220,p:2,c:57,f:0},
+    {name:'Dates (2)',cal:130,p:1,c:36,f:0},
+    {name:'Collagen Peptides (1 scoop)',cal:35,p:9,c:0,f:0},
+    {name:'Turkey Bacon (2 slices)',cal:60,p:4,c:0,f:4},
+    {name:'Ground Beef (4oz)',cal:280,p:20,c:0,f:22},
+    {name:'Cauliflower Rice (1 cup)',cal:25,p:2,c:5,f:0},
+    {name:'Coconut Yogurt (3/4 cup)',cal:140,p:1,c:8,f:11},
+    {name:'Berries Mixed (1 cup)',cal:70,p:1,c:17,f:0},
+    {name:'Guacamole (1/4 cup)',cal:90,p:1,c:5,f:7},
+    {name:'Hummus (2 tbsp)',cal:70,p:2,c:6,f:4},
+    {name:'Salad Greens (2 cups)',cal:10,p:1,c:2,f:0},
+    {name:'Cucumber (1 cup)',cal:16,p:1,c:4,f:0},
+    {name:'Beets (1 cup)',cal:58,p:2,c:13,f:0},
+    {name:'Asparagus (1 cup)',cal:27,p:3,c:5,f:0},
+    {name:'Maple Syrup (1 tbsp)',cal:52,p:0,c:13,f:0},
+    {name:'Honey (1 tbsp)',cal:64,p:0,c:17,f:0},
+    {name:'Chia Seeds (2 tbsp)',cal:120,p:4,c:8,f:8},
+  ],
+
+  renderPhotoMealSection() {
+    const meals = this.state.photoMeals || [];
+    const today = this.getTodayKey();
+    const todayMeals = meals.filter(m => m.date.startsWith(today));
+    const todayCals = todayMeals.reduce((s, m) => s + m.totalCal, 0);
+
+    let html = `
+      <div class="card">
+        <div class="card-title"><span class="icon">📸</span> Snap & Log a Meal</div>
+        <p style="font-size:12px;color:var(--text-light);margin-bottom:10px;">Take a photo of your meal, then search foods to calculate calories.</p>
+
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <label class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;cursor:pointer;">
+            📷 Camera
+            <input type="file" accept="image/*" capture="environment" id="mealPhotoInput" style="display:none;" onchange="App.handleMealPhoto(this)">
+          </label>
+          <label class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;cursor:pointer;">
+            🖼️ Gallery
+            <input type="file" accept="image/*" id="mealGalleryInput" style="display:none;" onchange="App.handleMealPhoto(this)">
+          </label>
+        </div>
+
+        <div id="mealPhotoPreview" style="display:none;margin-bottom:12px;">
+          <img id="mealPhotoImg" style="width:100%;border-radius:var(--radius-sm);max-height:200px;object-fit:cover;">
+        </div>
+
+        <div class="form-group">
+          <label>🔍 Search Foods</label>
+          <input type="text" id="foodSearch" placeholder="Type to search... e.g. chicken, sweet potato" oninput="App.searchFood(this.value)">
+        </div>
+        <div id="foodResults" style="max-height:180px;overflow-y:auto;"></div>
+        <div id="mealBuilder" style="display:none;">
+          <h4 style="font-size:13px;color:var(--pink-dark);margin:12px 0 6px;">Your Meal</h4>
+          <div id="mealItems"></div>
+          <div id="mealTotal" class="macro-bar" style="margin-top:8px;"></div>
+          <button class="btn btn-primary btn-full btn-sm" onclick="App.savePhotoMeal()" style="margin-top:8px;">💾 Save This Meal</button>
+        </div>
+      </div>
+    `;
+
+    // Today's logged meals
+    if (todayMeals.length > 0) {
+      html += `
+        <div class="card">
+          <div class="card-title"><span class="icon">📋</span> Today's Logged Meals</div>
+          <div style="text-align:center;margin-bottom:8px;">
+            <span style="font-size:22px;font-weight:800;color:var(--pink-dark);">${todayCals}</span>
+            <span style="font-size:12px;color:var(--text-light);"> cal logged today</span>
+          </div>
+          ${todayMeals.map((m, idx) => `
+            <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--pink-light);align-items:center;">
+              ${m.photo ? `<img src="${m.photo}" style="width:50px;height:50px;border-radius:8px;object-fit:cover;">` : '<div style="width:50px;height:50px;background:var(--pink-light);border-radius:8px;display:flex;align-items:center;justify-content:center;">🍽️</div>'}
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:600;">${m.items.map(i => i.name.split('(')[0].trim()).join(', ')}</div>
+                <div style="font-size:11px;color:var(--text-light);">${m.totalCal} cal | ${m.totalP}g P | ${m.totalC}g C | ${m.totalF}g F</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    return html;
+  },
+
+  _photoMealItems: [],
+  _currentPhoto: null,
+
+  handleMealPhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this._currentPhoto = e.target.result;
+      document.getElementById('mealPhotoPreview').style.display = 'block';
+      document.getElementById('mealPhotoImg').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  },
+
+  searchFood(query) {
+    const results = document.getElementById('foodResults');
+    if (!query || query.length < 2) { results.innerHTML = ''; return; }
+    const q = query.toLowerCase();
+    const matches = this.FOOD_DB.filter(f => f.name.toLowerCase().includes(q)).slice(0, 8);
+    results.innerHTML = matches.map(f => `
+      <div class="food-result" onclick="App.addFoodItem('${f.name.replace(/'/g,"\\'")}',${f.cal},${f.p},${f.c},${f.f})">
+        <span style="flex:1;font-size:13px;">${f.name}</span>
+        <span style="font-size:12px;color:var(--lavender);font-weight:700;">${f.cal} cal</span>
+      </div>
+    `).join('');
+    if (matches.length === 0 && query.length > 2) {
+      results.innerHTML = `<div style="padding:8px;font-size:12px;color:var(--text-light);">No match — try a simpler term or
+        <span style="color:var(--pink-dark);cursor:pointer;font-weight:700;" onclick="App.addCustomFood()">add custom food</span></div>`;
+    }
+  },
+
+  addFoodItem(name, cal, p, c, f) {
+    this._photoMealItems.push({ name, cal, p, c, f, qty: 1 });
+    this.updateMealBuilder();
+    document.getElementById('foodSearch').value = '';
+    document.getElementById('foodResults').innerHTML = '';
+  },
+
+  addCustomFood() {
+    const name = prompt('Food name:');
+    if (!name) return;
+    const cal = parseInt(prompt('Calories:')) || 0;
+    const p = parseInt(prompt('Protein (g):')) || 0;
+    const c = parseInt(prompt('Carbs (g):')) || 0;
+    const f = parseInt(prompt('Fat (g):')) || 0;
+    this._photoMealItems.push({ name, cal, p, c, f, qty: 1 });
+    this.updateMealBuilder();
+  },
+
+  removeFoodItem(idx) {
+    this._photoMealItems.splice(idx, 1);
+    this.updateMealBuilder();
+  },
+
+  updateMealBuilder() {
+    const items = this._photoMealItems;
+    const builder = document.getElementById('mealBuilder');
+    if (items.length === 0) { builder.style.display = 'none'; return; }
+    builder.style.display = 'block';
+
+    const itemsEl = document.getElementById('mealItems');
+    itemsEl.innerHTML = items.map((item, i) => `
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--pink-light);">
+        <span style="flex:1;font-size:13px;">${item.name}</span>
+        <span style="font-size:12px;color:var(--lavender);font-weight:600;">${item.cal} cal</span>
+        <button class="swap-btn" onclick="App.removeFoodItem(${i})" style="color:var(--rose);">✕</button>
+      </div>
+    `).join('');
+
+    const totals = items.reduce((s, i) => ({ cal: s.cal + i.cal, p: s.p + i.p, c: s.c + i.c, f: s.f + i.f }), { cal: 0, p: 0, c: 0, f: 0 });
+    document.getElementById('mealTotal').innerHTML = `
+      <div class="macro-pill cal">🔥 ${totals.cal}<br><small>cal</small></div>
+      <div class="macro-pill protein">💪 ${totals.p}g<br><small>protein</small></div>
+      <div class="macro-pill carbs">🌾 ${totals.c}g<br><small>carbs</small></div>
+      <div class="macro-pill fat">🥑 ${totals.f}g<br><small>fat</small></div>
+    `;
+  },
+
+  savePhotoMeal() {
+    if (this._photoMealItems.length === 0) return;
+    const items = [...this._photoMealItems];
+    const totals = items.reduce((s, i) => ({ cal: s.cal + i.cal, p: s.p + i.p, c: s.c + i.c, f: s.f + i.f }), { cal: 0, p: 0, c: 0, f: 0 });
+
+    this.state.photoMeals.push({
+      date: new Date().toISOString(),
+      photo: this._currentPhoto || null,
+      items,
+      totalCal: totals.cal,
+      totalP: totals.p,
+      totalC: totals.c,
+      totalF: totals.f
+    });
+
+    this._photoMealItems = [];
+    this._currentPhoto = null;
+    this.saveState();
+    this.renderTrack();
   },
 
   /* ── TODAY (GAMIFIED DAILY CHECKLIST) ────────────────── */

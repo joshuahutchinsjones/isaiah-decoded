@@ -998,6 +998,61 @@ html, body { overflow-x: hidden; max-width: 100vw; }
   .card { box-shadow: none; border: 1px solid #ddd; }
 }
 
+/* ── MEAL RATING ─────────────────────────────────────── */
+
+.meal-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.rate-btn {
+  border: none;
+  background: var(--pink-light);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rate-btn:hover { transform: scale(1.15); }
+.rate-btn.liked { background: var(--mint-light); box-shadow: 0 0 0 2px var(--mint); }
+.rate-btn.disliked { background: #ffe0e0; box-shadow: 0 0 0 2px var(--rose); }
+
+.rate-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+.rate-tag.loved { background: var(--mint-light); color: #2c8a6e; }
+.rate-tag.nope { background: #ffe0e0; color: var(--rose); }
+
+/* ── FOOD SEARCH / PHOTO LOGGER ──────────────────────── */
+
+.food-result {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px dashed var(--pink-light);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.food-result:hover { background: var(--pink-light); border-radius: 8px; }
+.food-result:last-child { border-bottom: none; }
+
+/* ── MULTI GOAL ──────────────────────────────────────── */
+
+.multi-goal { flex-wrap: wrap; }
+
 /* ── SENSITIVITY GRID ────────────────────────────────── */
 
 .sensitivity-grid {

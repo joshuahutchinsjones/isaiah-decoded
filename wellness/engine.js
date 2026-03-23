@@ -27,8 +27,13 @@ const Engine = {
   calcGoalCalories(profile) {
     const tdee = this.calcTDEE(profile);
     if (profile.goal === 'lose') return Math.round(tdee - 350); // gentle deficit
-    if (profile.goal === 'gain') return Math.round(tdee + 300);
+    if (profile.goal === 'gain') return Math.round(tdee + 250);
     return tdee;
+  },
+
+  getEffectiveBodyType(profile) {
+    if (profile.bodyType === 'auto') return profile._detectedBodyType || 'mesomorph';
+    return profile.bodyType;
   },
 
   /* ── MACRO TARGETS by carb day ───────────────────────── */
@@ -57,7 +62,7 @@ const Engine = {
     window.WEEKLY_SCHEDULE.forEach((dayInfo, i) => {
       const carbLevel = dayInfo.carbLevel;
       const macros = this.getMacros(cals, carbLevel);
-      const meals = this.pickMeals(carbLevel, macros);
+      const meals = this.pickMeals(carbLevel, macros, profile._disliked || [], profile._liked || []);
       const workout = window.WORKOUTS.find(w => w.id === dayInfo.workout);
 
       // Scale portions to match target calories
@@ -95,15 +100,18 @@ const Engine = {
     return plan;
   },
 
-  pickMeals(carbLevel, targetMacros) {
-    const recipes = window.RECIPES;
+  pickMeals(carbLevel, targetMacros, disliked, liked) {
+    const recipes = window.RECIPES.filter(r => !disliked.includes(r.id));
     const pick = (meal, level) => {
-      const pool = recipes.filter(r => r.meal === meal && r.carbLevel === level);
+      let pool = recipes.filter(r => r.meal === meal && r.carbLevel === level);
       if (pool.length === 0) {
-        // fallback to moderate
-        const fallback = recipes.filter(r => r.meal === meal && r.carbLevel === 'moderate');
-        return fallback[Math.floor(Math.random() * fallback.length)] || recipes.find(r => r.meal === meal);
+        pool = recipes.filter(r => r.meal === meal && r.carbLevel === 'moderate');
+        if (pool.length === 0) pool = recipes.filter(r => r.meal === meal);
       }
+      if (pool.length === 0) return null;
+      // Prefer liked recipes with 60% chance
+      const likedPool = pool.filter(r => liked.includes(r.id));
+      if (likedPool.length > 0 && Math.random() > 0.4) return likedPool[Math.floor(Math.random() * likedPool.length)];
       return pool[Math.floor(Math.random() * pool.length)];
     };
 
