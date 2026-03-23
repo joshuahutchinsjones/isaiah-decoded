@@ -309,12 +309,15 @@ const App = {
           ).join('')}
         </div>
         ${p.bodyType === 'auto' && p._detectedBodyType ? `
-          <div style="margin-top:8px;padding:8px 12px;background:var(--lavender-light);border-radius:var(--radius-sm);font-size:12px;">
-            Based on your measurements: <strong>${p._detectedBodyType === 'ectomorph' ? '🦋 Ectomorph (slim build)' : p._detectedBodyType === 'mesomorph' ? '⚡ Mesomorph (athletic build)' : '🧸 Endomorph (curvy build)'}</strong>
+          <div style="margin-top:10px;padding:12px;background:var(--mint-light);border-radius:var(--radius-sm);font-size:13px;">
+            ✅ Based on your measurements: <strong>${p._detectedBodyType === 'ectomorph' ? '🦋 Ectomorph (slim build)' : p._detectedBodyType === 'mesomorph' ? '⚡ Mesomorph (athletic build)' : '🧸 Endomorph (curvy build)'}</strong>
+            <div style="font-size:11px;color:var(--text-light);margin-top:4px;">This updates automatically as you log new measurements!</div>
           </div>
         ` : p.bodyType === 'auto' ? `
-          <div style="margin-top:8px;font-size:12px;color:var(--text-light);">
-            Log measurements in the Track tab and I'll figure out your body type! 📏
+          <div style="margin-top:10px;padding:12px;background:linear-gradient(135deg, var(--pink-light), var(--lavender-light));border-radius:var(--radius-sm);font-size:13px;line-height:1.5;">
+            <div style="font-size:16px;margin-bottom:4px;">🤗 No worries, we've got you!</div>
+            <div style="color:var(--text);">Head to the <strong>Track</strong> tab and log your <strong>shoulders</strong>, <strong>waist</strong>, and <strong>hips</strong> measurements. We'll figure out your body type automatically and customize your plan!</div>
+            <button class="btn btn-primary btn-sm" onclick="App.goToTab('track')" style="margin-top:8px;">📏 Go to Measurements</button>
           </div>
         ` : ''}
       </div>
