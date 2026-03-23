@@ -19,6 +19,8 @@ const App = {
     dislikedRecipes: [],  // recipe IDs the user thumbs-downed
     likedRecipes: [],     // recipe IDs the user thumbs-upped
     photoMeals: [],       // { date, photo (dataURL), items: [{name, cal, p, c, f}], totalCal }
+    shopProducts: [],     // { id, name, category, description, imageUrl, affiliateUrl, price }
+    shopAdmin: false,     // toggle admin mode to add/edit products
     xp: 0,
     streak: 0,
     lastCompleteDate: null
@@ -87,7 +89,8 @@ const App = {
       meals: () => this.renderMeals(),
       grocery: () => this.renderGrocery(),
       workouts: () => this.renderWorkouts(),
-      track: () => this.renderTrack()
+      track: () => this.renderTrack(),
+      shop: () => this.renderShop()
     };
     if (fn[tab]) fn[tab]();
   },
@@ -1103,6 +1106,164 @@ const App = {
         ctx.fillText(label, x, h - 8);
       }
     });
+  },
+
+  /* ── SHOP (AMAZON FAVS) ─────────────────────────────── */
+
+  SHOP_CATEGORIES: [
+    { id: 'supplements', label: '💊 Supplements', icon: '💊' },
+    { id: 'superfoods', label: '🌿 Superfoods', icon: '🌿' },
+    { id: 'kitchen', label: '🍳 Kitchen Tools', icon: '🍳' },
+    { id: 'mealprep', label: '🥡 Meal Prep', icon: '🥡' },
+    { id: 'bottles', label: '💧 Water Bottles', icon: '💧' },
+    { id: 'fitness', label: '🏋️ Fitness Gear', icon: '🏋️' },
+    { id: 'clothing', label: '👟 Clothing & Activewear', icon: '👟' },
+    { id: 'skincare', label: '✨ Beauty & Skincare', icon: '✨' },
+    { id: 'baby', label: '👶 Baby & Nursing', icon: '👶' },
+    { id: 'home', label: '🏡 Home & Organization', icon: '🏡' },
+    { id: 'books', label: '📚 Books', icon: '📚' },
+    { id: 'wellness', label: '🧘 Wellness & Self-Care', icon: '🧘' },
+    { id: 'other', label: '🎀 Other Favs', icon: '🎀' }
+  ],
+
+  _shopFilter: 'all',
+
+  renderShop() {
+    const el = document.getElementById('tab-shop');
+    const products = this.state.shopProducts || [];
+    const isAdmin = this.state.shopAdmin;
+    const filter = this._shopFilter;
+
+    const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+
+    let html = `
+      <div class="card" style="text-align:center;">
+        <div style="font-size:32px;margin-bottom:4px;">🛍️</div>
+        <div class="card-title" style="justify-content:center;margin-bottom:4px;">
+          <span>Aubree's Faves</span>
+        </div>
+        <p style="font-size:13px;color:var(--text-light);">My favorite health & wellness finds from Amazon!</p>
+        <p style="font-size:11px;color:var(--lavender);margin-top:4px;">Tap any product to shop — thank you for your support! 💕</p>
+      </div>
+    `;
+
+    // Category filter pills
+    html += `<div style="display:flex;gap:6px;overflow-x:auto;padding:0 0 12px;-webkit-overflow-scrolling:touch;" class="shop-filter-row">
+      <button class="shop-filter ${filter === 'all' ? 'active' : ''}" onclick="App._shopFilter='all';App.renderShop()">All</button>
+      ${this.SHOP_CATEGORIES.map(c =>
+        `<button class="shop-filter ${filter === c.id ? 'active' : ''}" onclick="App._shopFilter='${c.id}';App.renderShop()">${c.icon} ${c.label.split(' ').slice(1).join(' ')}</button>`
+      ).join('')}
+    </div>`;
+
+    // Product grid
+    if (filtered.length === 0) {
+      html += `<div class="empty-state">
+        <span class="emoji">🛍️</span>
+        <p>${isAdmin ? 'No products yet — add your first one below!' : 'Products coming soon! Check back later 💕'}</p>
+      </div>`;
+    } else {
+      html += `<div class="shop-grid">`;
+      filtered.forEach((p, idx) => {
+        const catInfo = this.SHOP_CATEGORIES.find(c => c.id === p.category) || { icon: '🎀' };
+        html += `
+          <div class="shop-card">
+            ${isAdmin ? `<button class="shop-delete" onclick="event.preventDefault();event.stopPropagation();App.deleteProduct(${idx})">✕</button>` : ''}
+            <a href="${p.affiliateUrl || '#'}" target="_blank" rel="noopener" class="shop-link">
+              <div class="shop-img" style="background-image:url('${p.imageUrl || ''}');">
+                ${!p.imageUrl ? `<span style="font-size:40px;">${catInfo.icon}</span>` : ''}
+              </div>
+              <div class="shop-info">
+                <div class="shop-cat">${catInfo.icon} ${(catInfo.label || '').split(' ').slice(1).join(' ')}</div>
+                <div class="shop-name">${p.name}</div>
+                ${p.description ? `<div class="shop-desc">${p.description}</div>` : ''}
+                ${p.price ? `<div class="shop-price">${p.price}</div>` : ''}
+                <div class="shop-cta">Shop on Amazon →</div>
+              </div>
+            </a>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    // Admin section
+    html += `
+      <div style="margin-top:16px;text-align:center;">
+        <button class="btn btn-secondary btn-sm" onclick="App.toggleShopAdmin()">
+          ${isAdmin ? '🔒 Lock Editing' : '🔑 Edit Products'}
+        </button>
+      </div>
+    `;
+
+    if (isAdmin) {
+      html += `
+        <div class="card" style="margin-top:12px;">
+          <div class="card-title"><span class="icon">➕</span> Add Product</div>
+          <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" id="shop-name" placeholder="e.g. Vital Proteins Collagen">
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="shop-category" style="width:100%;padding:10px 14px;border:2px solid var(--pink-light);border-radius:var(--radius-sm);font-family:'Nunito',sans-serif;font-size:15px;">
+              ${this.SHOP_CATEGORIES.map(c => `<option value="${c.id}">${c.label}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Amazon Affiliate Link</label>
+            <input type="url" id="shop-url" placeholder="https://amzn.to/...">
+          </div>
+          <div class="form-group">
+            <label>Image URL (optional)</label>
+            <input type="url" id="shop-image" placeholder="Paste product image URL">
+          </div>
+          <div class="form-group">
+            <label>Short Description (optional)</label>
+            <input type="text" id="shop-desc" placeholder="Why I love this...">
+          </div>
+          <div class="form-group">
+            <label>Price (optional)</label>
+            <input type="text" id="shop-price" placeholder="$24.99">
+          </div>
+          <button class="btn btn-primary btn-full" onclick="App.addProduct()">💕 Add Product</button>
+        </div>
+      `;
+    }
+
+    el.innerHTML = html;
+  },
+
+  toggleShopAdmin() {
+    this.state.shopAdmin = !this.state.shopAdmin;
+    this.renderShop();
+  },
+
+  addProduct() {
+    const get = (id) => document.getElementById(id)?.value?.trim();
+    const name = get('shop-name');
+    const affiliateUrl = get('shop-url');
+    if (!name) { alert('Please enter a product name!'); return; }
+
+    const product = {
+      id: Date.now().toString(36),
+      name,
+      category: get('shop-category') || 'other',
+      affiliateUrl: affiliateUrl || '#',
+      imageUrl: get('shop-image') || '',
+      description: get('shop-desc') || '',
+      price: get('shop-price') || ''
+    };
+
+    this.state.shopProducts.push(product);
+    this.saveState();
+    this.renderShop();
+  },
+
+  deleteProduct(idx) {
+    if (!confirm('Remove this product?')) return;
+    this.state.shopProducts.splice(idx, 1);
+    this.saveState();
+    this.renderShop();
   },
 
   /* ── GOAL VALIDATION ────────────────────────────────── */
