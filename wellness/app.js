@@ -365,8 +365,9 @@ const App = {
       ` : ''}
     `;
 
-    // Bind toggle groups
+    // Bind toggle groups (single-select, skip the multi-goal group)
     el.querySelectorAll('.toggle-group').forEach(group => {
+      if (group.id === 'goalGroup') return; // goals use multi-select via toggleGoal()
       group.addEventListener('click', (e) => {
         const btn = e.target.closest('.toggle-btn');
         if (!btn) return;
