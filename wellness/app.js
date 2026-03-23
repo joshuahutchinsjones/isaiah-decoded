@@ -716,62 +716,75 @@ const App = {
 
     let html = '';
 
-    // Measurement input
+    // Full personal-trainer measurement set
+    const mGroups = [
+      [{ key:'weight', label:'Weight (lbs)', ph:'150', icon:'⚖️' },
+       { key:'bodyFat', label:'Body Fat %', ph:'25', icon:'📊' }],
+      [{ key:'neck', label:'Neck (in)', ph:'13', icon:'👤' },
+       { key:'shoulders', label:'Shoulders (in)', ph:'40', icon:'🤸' }],
+      [{ key:'bust', label:'Bust/Chest (in)', ph:'36', icon:'👗' },
+       { key:'underBust', label:'Under Bust (in)', ph:'30', icon:'📐' }],
+      [{ key:'waist', label:'Waist (in)', ph:'28', icon:'📏' },
+       { key:'belly', label:'Belly Button (in)', ph:'32', icon:'🫄' }],
+      [{ key:'hips', label:'Hips (in)', ph:'38', icon:'🍑' },
+       { key:'glutes', label:'Glutes (in)', ph:'40', icon:'🔥' }],
+      [{ key:'bicepL', label:'Bicep L (in)', ph:'11', icon:'💪' },
+       { key:'bicepR', label:'Bicep R (in)', ph:'11', icon:'💪' }],
+      [{ key:'forearmL', label:'Forearm L (in)', ph:'9', icon:'🦾' },
+       { key:'forearmR', label:'Forearm R (in)', ph:'9', icon:'🦾' }],
+      [{ key:'thighL', label:'Thigh L (in)', ph:'22', icon:'🦵' },
+       { key:'thighR', label:'Thigh R (in)', ph:'22', icon:'🦵' }],
+      [{ key:'calfL', label:'Calf L (in)', ph:'14', icon:'🦶' },
+       { key:'calfR', label:'Calf R (in)', ph:'14', icon:'🦶' }],
+    ];
+
     html += `
       <div class="card">
         <div class="card-title"><span class="icon">📏</span> Log Measurements</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Weight (lbs)</label>
-            <input type="number" id="track-weight" step="0.1" placeholder="150">
+        <p style="font-size:11px;color:var(--text-light);margin-bottom:10px;">Full personal trainer body assessment. Fill in what you can — you don't need every field each time.</p>
+        ${mGroups.map(row => `
+          <div class="form-row">
+            ${row.map(f => `
+              <div class="form-group">
+                <label>${f.icon} ${f.label}</label>
+                <input type="number" id="track-${f.key}" step="0.1" placeholder="${f.ph}">
+              </div>
+            `).join('')}
           </div>
-          <div class="form-group">
-            <label>Waist (in)</label>
-            <input type="number" id="track-waist" step="0.1" placeholder="30">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Hips (in)</label>
-            <input type="number" id="track-hips" step="0.1" placeholder="38">
-          </div>
-          <div class="form-group">
-            <label>Bust (in)</label>
-            <input type="number" id="track-bust" step="0.1" placeholder="36">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Arms (in)</label>
-            <input type="number" id="track-arms" step="0.1" placeholder="12">
-          </div>
-          <div class="form-group">
-            <label>Thighs (in)</label>
-            <input type="number" id="track-thighs" step="0.1" placeholder="22">
-          </div>
-        </div>
+        `).join('')}
         <button class="btn btn-primary btn-full" onclick="App.saveMeasurement()">📏 Save Measurements</button>
       </div>
     `;
 
     // Progress summary
     if (progress) {
-      html += `
-        <div class="card">
-          <div class="card-title"><span class="icon">📈</span> Your Progress (${progress.duration} days)</div>
-          <div class="tracker-grid">
-            ${['weight','waist','hips','bust','arms','thighs'].map(key => {
-              const val = progress[key];
-              if (val === null) return '';
-              const cls = val < 0 ? 'positive' : val > 0 ? 'negative' : '';
-              return `<div class="tracker-stat ${cls}">
-                <div class="value">${val > 0 ? '+' : ''}${val}"</div>
-                <div class="label">${key}</div>
-              </div>`;
-            }).join('')}
+      const mLabels = {
+        weight:'Weight', bodyFat:'Body Fat', neck:'Neck', shoulders:'Shoulders',
+        bust:'Bust', underBust:'Under Bust', waist:'Waist', belly:'Belly',
+        hips:'Hips', glutes:'Glutes', bicepL:'Bicep L', bicepR:'Bicep R',
+        forearmL:'Forearm L', forearmR:'Forearm R', thighL:'Thigh L', thighR:'Thigh R',
+        calfL:'Calf L', calfR:'Calf R'
+      };
+      const allKeys = Object.keys(mLabels);
+      const hasData = allKeys.filter(k => progress[k] !== null);
+      if (hasData.length > 0) {
+        html += `
+          <div class="card">
+            <div class="card-title"><span class="icon">📈</span> Your Progress (${progress.duration} days)</div>
+            <div class="tracker-grid">
+              ${hasData.map(key => {
+                const val = progress[key];
+                const unit = key === 'weight' ? ' lbs' : key === 'bodyFat' ? '%' : '"';
+                const cls = val < 0 ? 'positive' : val > 0 ? 'negative' : '';
+                return `<div class="tracker-stat ${cls}">
+                  <div class="value">${val > 0 ? '+' : ''}${val}${unit}</div>
+                  <div class="label">${mLabels[key]}</div>
+                </div>`;
+              }).join('')}
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
     }
 
     // Measurement history
@@ -779,16 +792,19 @@ const App = {
       html += `
         <div class="card">
           <div class="card-title"><span class="icon">📋</span> History</div>
-          ${this.state.measurements.slice().reverse().slice(0, 10).map(m => `
-            <div class="history-item">
+          ${this.state.measurements.slice().reverse().slice(0, 10).map(m => {
+            const vals = [];
+            if (m.weight) vals.push(m.weight + ' lbs');
+            if (m.waist) vals.push('W:' + m.waist + '"');
+            if (m.hips) vals.push('H:' + m.hips + '"');
+            if (m.bust) vals.push('B:' + m.bust + '"');
+            if (m.bicepL) vals.push('Bi:' + m.bicepL + '"');
+            if (m.thighL) vals.push('Th:' + m.thighL + '"');
+            return `<div class="history-item">
               <span class="history-date">${new Date(m.date).toLocaleDateString('en-US', {month:'short', day:'numeric'})}</span>
-              <span class="history-values">
-                ${m.weight ? m.weight + ' lbs' : ''}
-                ${m.waist ? ' | W:' + m.waist + '"' : ''}
-                ${m.hips ? ' | H:' + m.hips + '"' : ''}
-              </span>
-            </div>
-          `).join('')}
+              <span class="history-values">${vals.join(' | ')}</span>
+            </div>`;
+          }).join('')}
         </div>
       `;
     }
@@ -851,15 +867,10 @@ const App = {
   saveMeasurement() {
     const get = (id) => { const v = document.getElementById(id)?.value; return v ? parseFloat(v) : null; };
 
-    const entry = {
-      date: new Date().toISOString(),
-      weight: get('track-weight'),
-      waist: get('track-waist'),
-      hips: get('track-hips'),
-      bust: get('track-bust'),
-      arms: get('track-arms'),
-      thighs: get('track-thighs')
-    };
+    const allKeys = ['weight','bodyFat','neck','shoulders','bust','underBust','waist','belly',
+                     'hips','glutes','bicepL','bicepR','forearmL','forearmR','thighL','thighR','calfL','calfR'];
+    const entry = { date: new Date().toISOString() };
+    allKeys.forEach(k => { entry[k] = get('track-' + k); });
 
     // Need at least weight
     if (!entry.weight) {

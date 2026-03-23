@@ -280,16 +280,14 @@ const Engine = {
       return null;
     };
 
-    return {
-      weight: diff('weight'),
-      waist: diff('waist'),
-      hips: diff('hips'),
-      bust: diff('bust'),
-      arms: diff('arms'),
-      thighs: diff('thighs'),
+    const allKeys = ['weight','bodyFat','neck','shoulders','bust','underBust','waist','belly',
+                     'hips','glutes','bicepL','bicepR','forearmL','forearmR','thighL','thighR','calfL','calfR'];
+    const result = {
       duration: Math.round((new Date(last.date) - new Date(first.date)) / 86400000),
       totalEntries: measurements.length
     };
+    allKeys.forEach(k => { result[k] = diff(k); });
+    return result;
   },
 
   /* ── WEEKLY CALORIE SUMMARY ──────────────────────────── */
