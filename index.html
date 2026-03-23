@@ -84,13 +84,17 @@
         <div id="chapterList" class="chapter-list"></div>
       </nav>
       <main id="readingPanel" class="reading-panel">
-        <h2 id="chapterTitle" class="chapter-title">Isaiah 1</h2>
+        <div class="chapter-title-row">
+          <h2 id="chapterTitle" class="chapter-title">Isaiah 1</h2>
+          <button class="mob-chapter-btn" id="mobChapterBtn" onclick="toggleMobileChapterPicker()" style="display:none;">Ch &#9660;</button>
+        </div>
         <div id="rungBadge" class="rung-badge" style="display:none;"></div>
         <div id="versesContainer" class="verses-container"></div>
         <div id="highlightToolbar" class="highlight-toolbar"></div>
       </main>
       <div class="sidebar-resize-handle" id="sidebarResizeHandle"></div>
       <aside class="concordance-panel" id="concordancePanelAside">
+        <div class="mob-drag-handle" id="mobDragHandle"><div class="mob-drag-pill"></div></div>
         <div class="sidebar-tabs">
           <button class="sidebar-tab active" data-panel="concordance" onclick="switchSidebarTab('concordance')">Concordance</button>
           <button class="sidebar-tab" data-panel="groups" onclick="switchSidebarTab('groups')">Groups</button>
@@ -165,7 +169,29 @@
   </div>
 
   <!-- Mobile sidebar toggle -->
-  <button id="mobileSidebarBtn" onclick="toggleMobileSidebar()" title="Open sidebar" style="display:none;position:fixed;bottom:12px;right:12px;z-index:600;width:50px;height:50px;border-radius:50%;background:#7b4a2e;color:#fff;border:none;box-shadow:0 3px 12px rgba(0,0,0,0.3);cursor:pointer;font-size:1.3rem;align-items:center;justify-content:center;">&#9776;</button>
+  <!-- Mobile chapter picker -->
+  <div id="mobChapterDropdown" class="mob-chapter-dropdown" onclick="if(event.target===this)closeMobileChapterPicker()">
+    <div class="mob-chapter-grid">
+      <div class="mob-chapter-grid-title">Select Chapter</div>
+      <div class="mob-chapter-grid-items" id="mobChapterGridItems"></div>
+    </div>
+  </div>
+
+  <!-- Mobile bottom bar -->
+  <div id="mobileBottomBar" style="display:none;">
+    <button class="mob-bar-btn" onclick="MobileSheet.toggleToolbar()" title="Highlight tools">&#x1F3A8;</button>
+    <button class="mob-bar-btn mob-bar-main" onclick="MobileSheet.snapTo('half')" title="Open study panel">&#9776; Study Tools</button>
+    <button class="mob-bar-btn" onclick="MobileSheet.toggleToolbar()" title="Legend">&#x1F50D;</button>
+  </div>
+
+  <!-- Mobile toolbar overlay -->
+  <div id="mobileToolbarOverlay" style="display:none;">
+    <div class="mob-toolbar-header">
+      <span>Highlight Tools</span>
+      <button onclick="MobileSheet.toggleToolbar()">&times;</button>
+    </div>
+    <div id="mobileToolbarContent"></div>
+  </div>
 
   <!-- Scripts -->
   <script src="data/isaiah-data.js"></script>

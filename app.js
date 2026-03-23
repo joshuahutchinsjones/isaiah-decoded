@@ -136,47 +136,206 @@ function showKeysSection(section) {
 
 // ===== SIDEBAR TAB SWITCHING =====
 
-// ===== MOBILE SIDEBAR =====
+// ===== MOBILE BOTTOM SHEET =====
 
-// Show/hide mobile button based on screen width
-function checkMobileButton() {
-  const btn = document.getElementById('mobileSidebarBtn');
-  if (!btn) return;
-  if (window.innerWidth <= 850) {
-    btn.style.display = 'flex';
-  } else {
-    btn.style.display = 'none';
-    // Also close mobile sidebar if open
+const MobileSheet = {
+  state: 'collapsed', // 'collapsed' | 'half' | 'full'
+  touchStartY: 0,
+  touchCurrentY: 0,
+  dragging: false,
+  toolbarOpen: false,
+
+  init() {
+    this.checkMobile();
+    window.addEventListener('resize', () => this.checkMobile());
+    this.setupSwipe();
+  },
+
+  checkMobile() {
+    const bar = document.getElementById('mobileBottomBar');
     const panel = document.getElementById('concordancePanelAside');
-    if (panel) panel.classList.remove('mobile-open');
-  }
-}
-window.addEventListener('resize', checkMobileButton);
-document.addEventListener('DOMContentLoaded', () => setTimeout(checkMobileButton, 100));
+    if (!bar) return;
+    if (window.innerWidth <= 850) {
+      bar.style.display = 'flex';
+      if (this.state === 'collapsed') {
+        panel.classList.remove('mobile-open', 'mobile-full');
+      }
+    } else {
+      bar.style.display = 'none';
+      panel.classList.remove('mobile-open', 'mobile-full');
+      this.state = 'collapsed';
+    }
+  },
 
-function toggleMobileSidebar() {
-  const panel = document.getElementById('concordancePanelAside');
-  const btn = document.getElementById('mobileSidebarBtn');
-  if (!panel) return;
+  snapTo(target) {
+    const panel = document.getElementById('concordancePanelAside');
+    const bar = document.getElementById('mobileBottomBar');
+    if (!panel) return;
 
-  const isOpen = panel.classList.contains('mobile-open');
-  panel.classList.toggle('mobile-open', !isOpen);
-  if (btn) {
-    btn.classList.toggle('open', !isOpen);
-    btn.innerHTML = isOpen ? '&#9776;' : '&times;';
-    btn.title = isOpen ? 'Open sidebar' : 'Close sidebar';
+    panel.style.transition = 'transform 0.3s ease, height 0.3s ease';
+
+    if (target === 'collapsed') {
+      panel.classList.remove('mobile-open', 'mobile-full');
+      bar.style.display = 'flex';
+      this.state = 'collapsed';
+    } else if (target === 'half') {
+      panel.classList.add('mobile-open');
+      panel.classList.remove('mobile-full');
+      bar.style.display = 'none';
+      this.state = 'half';
+    } else if (target === 'full') {
+      panel.classList.add('mobile-open', 'mobile-full');
+      bar.style.display = 'none';
+      this.state = 'full';
+    }
+
+    setTimeout(() => { panel.style.transition = ''; }, 350);
+  },
+
+  cycle() {
+    if (this.state === 'collapsed') this.snapTo('half');
+    else if (this.state === 'half') this.snapTo('full');
+    else this.snapTo('collapsed');
+  },
+
+  // Swipe gesture on drag handle
+  setupSwipe() {
+    const handle = document.getElementById('mobDragHandle');
+    if (!handle) return;
+
+    handle.addEventListener('touchstart', (e) => {
+      this.touchStartY = e.touches[0].clientY;
+      this.dragging = true;
+    }, { passive: true });
+
+    handle.addEventListener('touchmove', (e) => {
+      if (!this.dragging) return;
+      this.touchCurrentY = e.touches[0].clientY;
+    }, { passive: true });
+
+    handle.addEventListener('touchend', () => {
+      if (!this.dragging) return;
+      this.dragging = false;
+      const dy = this.touchCurrentY - this.touchStartY;
+
+      if (Math.abs(dy) < 20) return; // too small
+
+      if (dy < 0) {
+        // Swiped UP
+        if (this.state === 'collapsed') this.snapTo('half');
+        else if (this.state === 'half') this.snapTo('full');
+      } else {
+        // Swiped DOWN
+        if (this.state === 'full') this.snapTo('half');
+        else if (this.state === 'half') this.snapTo('collapsed');
+      }
+    });
+
+    // Also support mouse drag for testing
+    handle.addEventListener('mousedown', (e) => {
+      this.touchStartY = e.clientY;
+      this.dragging = true;
+    });
+    document.addEventListener('mousemove', (e) => {
+      if (!this.dragging) return;
+      this.touchCurrentY = e.clientY;
+    });
+    document.addEventListener('mouseup', () => {
+      if (!this.dragging) return;
+      this.dragging = false;
+      const dy = this.touchCurrentY - this.touchStartY;
+      if (Math.abs(dy) < 20) return;
+      if (dy < 0) {
+        if (this.state === 'collapsed') this.snapTo('half');
+        else if (this.state === 'half') this.snapTo('full');
+      } else {
+        if (this.state === 'full') this.snapTo('half');
+        else if (this.state === 'half') this.snapTo('collapsed');
+      }
+    });
+  },
+
+  toggleToolbar() {
+    const overlay = document.getElementById('mobileToolbarOverlay');
+    if (!overlay) return;
+    this.toolbarOpen = !this.toolbarOpen;
+    overlay.style.display = this.toolbarOpen ? 'block' : 'none';
+
+    // Clone toolbar content into mobile overlay
+    if (this.toolbarOpen) {
+      const source = document.getElementById('highlightToolbar');
+      const target = document.getElementById('mobileToolbarContent');
+      if (source && target) {
+        target.innerHTML = source.innerHTML;
+        // Re-bind events by re-building toolbar
+        // Simpler: just show the actual toolbar inline
+      }
+    }
   }
-}
+};
+
+// Init on load
+document.addEventListener('DOMContentLoaded', () => setTimeout(() => MobileSheet.init(), 200));
 
 // Auto-open sidebar on word click in mobile
 function openMobileSidebarIfNeeded() {
   if (window.innerWidth <= 850) {
-    const panel = document.getElementById('concordancePanelAside');
-    const btn = document.getElementById('mobileSidebarBtn');
-    if (panel && !panel.classList.contains('mobile-open')) {
-      panel.classList.add('mobile-open');
-      if (btn) { btn.classList.add('open'); btn.innerHTML = '&times;'; }
+    if (MobileSheet.state === 'collapsed') {
+      MobileSheet.snapTo('half');
     }
+  }
+}
+
+function toggleMobileSidebar() {
+  MobileSheet.cycle();
+}
+
+function checkMobileButton() {
+  MobileSheet.checkMobile();
+  // Show/hide mobile chapter button
+  const chBtn = document.getElementById('mobChapterBtn');
+  if (chBtn) chBtn.style.display = window.innerWidth <= 850 ? 'block' : 'none';
+}
+
+function toggleMobileChapterPicker() {
+  const dropdown = document.getElementById('mobChapterDropdown');
+  if (!dropdown) return;
+  const isOpen = dropdown.classList.contains('open');
+  if (isOpen) {
+    closeMobileChapterPicker();
+  } else {
+    // Build grid
+    const grid = document.getElementById('mobChapterGridItems');
+    if (grid) {
+      let html = '';
+      const currentCh = typeof Concordance !== 'undefined' ? Concordance.currentChapter : 1;
+      for (let i = 1; i <= 66; i++) {
+        const isActive = i === currentCh;
+        let rungColor = '';
+        if (typeof getRungForChapter === 'function') {
+          const rNum = getRungForChapter(i);
+          if (rNum && typeof getRungById === 'function') {
+            const r = getRungById(rNum);
+            if (r) rungColor = `border-left: 3px solid ${r.color};`;
+          }
+        }
+        html += `<button class="mob-ch-btn ${isActive ? 'active' : ''}" style="${rungColor}" onclick="selectMobileChapter(${i})">${i}</button>`;
+      }
+      grid.innerHTML = html;
+    }
+    dropdown.classList.add('open');
+  }
+}
+
+function closeMobileChapterPicker() {
+  const dropdown = document.getElementById('mobChapterDropdown');
+  if (dropdown) dropdown.classList.remove('open');
+}
+
+function selectMobileChapter(ch) {
+  closeMobileChapterPicker();
+  if (typeof Concordance !== 'undefined') {
+    Concordance.showChapter(ch);
   }
 }
 
