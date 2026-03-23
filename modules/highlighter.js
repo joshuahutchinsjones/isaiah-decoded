@@ -254,8 +254,27 @@ const Highlighter = {
     const container = document.getElementById('versesContainer');
     if (!container) return;
 
+    // Desktop: mouseup
     container.addEventListener('mouseup', () => {
       setTimeout(() => this.handleSelection(), 10);
+    });
+
+    // Mobile: detect when user selects text via long-press + drag handles
+    // Show an "Apply" floating button when there's a selection
+    document.addEventListener('selectionchange', () => {
+      const sel = window.getSelection();
+      if (sel && !sel.isCollapsed && sel.rangeCount > 0) {
+        // Check if selection is inside verses
+        const range = sel.getRangeAt(0);
+        const node = range.startContainer.nodeType === 3 ? range.startContainer.parentElement : range.startContainer;
+        if (node && node.closest && node.closest('.verse')) {
+          this.showApplyButton();
+        } else {
+          this.hideApplyButton();
+        }
+      } else {
+        this.hideApplyButton();
+      }
     });
 
     // Eraser: click on highlighted text to remove
@@ -528,6 +547,35 @@ const Highlighter = {
       end++;
     }
     return { start, end };
+  },
+
+  // ===== MOBILE APPLY BUTTON =====
+  showApplyButton() {
+    if (!this.activeColor && this.mode === 'concordance') return;
+    let btn = document.getElementById('hlApplyBtn');
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.id = 'hlApplyBtn';
+      btn.className = 'hl-apply-btn';
+      btn.onclick = () => this.applyToCurrentSelection();
+      document.body.appendChild(btn);
+    }
+    const modeLabel = this.mode === 'underline' ? 'Underline' : 'Highlight';
+    btn.textContent = this.activeColor ? `${modeLabel} Selection` : 'Select a color first';
+    btn.disabled = !this.activeColor;
+    btn.style.display = 'flex';
+  },
+
+  hideApplyButton() {
+    const btn = document.getElementById('hlApplyBtn');
+    if (btn) btn.style.display = 'none';
+  },
+
+  applyToCurrentSelection() {
+    if (!this.activeColor) return;
+    // Use the existing handleSelection which reads window.getSelection()
+    this.handleSelection();
+    this.hideApplyButton();
   },
 
   // ===== EXPORT / IMPORT =====
