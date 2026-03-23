@@ -145,10 +145,33 @@ const MobileSheet = {
   dragging: false,
   toolbarOpen: false,
 
+  lastScrollY: 0,
+
   init() {
     this.checkMobile();
     window.addEventListener('resize', () => this.checkMobile());
     this.setupSwipe();
+    this.setupAutoHide();
+  },
+
+  // Hide bottom bar on scroll down, show on scroll up
+  setupAutoHide() {
+    const readingPanel = document.getElementById('readingPanel');
+    if (!readingPanel) return;
+    readingPanel.addEventListener('scroll', () => {
+      if (this.state !== 'collapsed') return; // only auto-hide when panel is collapsed
+      const bar = document.getElementById('mobileBottomBar');
+      if (!bar) return;
+      const currentY = readingPanel.scrollTop;
+      if (currentY > this.lastScrollY + 10) {
+        // Scrolling down — hide bar
+        bar.style.transform = 'translateY(100%)';
+      } else if (currentY < this.lastScrollY - 10) {
+        // Scrolling up — show bar
+        bar.style.transform = 'translateY(0)';
+      }
+      this.lastScrollY = currentY;
+    });
   },
 
   checkMobile() {
@@ -174,18 +197,24 @@ const MobileSheet = {
 
     panel.style.transition = 'transform 0.3s ease, height 0.3s ease';
 
+    const closeBtn = document.getElementById('mobFloatingClose');
+
     if (target === 'collapsed') {
       panel.classList.remove('mobile-open', 'mobile-full');
       bar.style.display = 'flex';
+      bar.style.transform = 'translateY(0)';
+      if (closeBtn) closeBtn.style.display = 'none';
       this.state = 'collapsed';
     } else if (target === 'half') {
       panel.classList.add('mobile-open');
       panel.classList.remove('mobile-full');
       bar.style.display = 'none';
+      if (closeBtn) { closeBtn.style.display = 'flex'; closeBtn.style.top = 'calc(45vh - 52px)'; }
       this.state = 'half';
     } else if (target === 'full') {
       panel.classList.add('mobile-open', 'mobile-full');
       bar.style.display = 'none';
+      if (closeBtn) { closeBtn.style.display = 'flex'; closeBtn.style.top = '138px'; }
       this.state = 'full';
     }
 
@@ -198,53 +227,22 @@ const MobileSheet = {
     else this.snapTo('collapsed');
   },
 
-  // Swipe gesture on drag handle
+  // Swipe gesture on drag handle AND sidebar tabs
   setupSwipe() {
     const handle = document.getElementById('mobDragHandle');
-    if (!handle) return;
+    const panel = document.getElementById('concordancePanelAside');
+    if (!handle || !panel) return;
 
-    handle.addEventListener('touchstart', (e) => {
-      this.touchStartY = e.touches[0].clientY;
-      this.dragging = true;
-    }, { passive: true });
+    // Attach swipe to both the handle and the tabs bar
+    const swipeTargets = [handle, panel.querySelector('.sidebar-tabs')].filter(Boolean);
 
-    handle.addEventListener('touchmove', (e) => {
-      if (!this.dragging) return;
-      this.touchCurrentY = e.touches[0].clientY;
-    }, { passive: true });
-
-    handle.addEventListener('touchend', () => {
+    const onStart = (y) => { this.touchStartY = y; this.touchCurrentY = y; this.dragging = true; };
+    const onMove = (y) => { if (this.dragging) this.touchCurrentY = y; };
+    const onEnd = () => {
       if (!this.dragging) return;
       this.dragging = false;
       const dy = this.touchCurrentY - this.touchStartY;
-
-      if (Math.abs(dy) < 20) return; // too small
-
-      if (dy < 0) {
-        // Swiped UP
-        if (this.state === 'collapsed') this.snapTo('half');
-        else if (this.state === 'half') this.snapTo('full');
-      } else {
-        // Swiped DOWN
-        if (this.state === 'full') this.snapTo('half');
-        else if (this.state === 'half') this.snapTo('collapsed');
-      }
-    });
-
-    // Also support mouse drag for testing
-    handle.addEventListener('mousedown', (e) => {
-      this.touchStartY = e.clientY;
-      this.dragging = true;
-    });
-    document.addEventListener('mousemove', (e) => {
-      if (!this.dragging) return;
-      this.touchCurrentY = e.clientY;
-    });
-    document.addEventListener('mouseup', () => {
-      if (!this.dragging) return;
-      this.dragging = false;
-      const dy = this.touchCurrentY - this.touchStartY;
-      if (Math.abs(dy) < 20) return;
+      if (Math.abs(dy) < 30) return;
       if (dy < 0) {
         if (this.state === 'collapsed') this.snapTo('half');
         else if (this.state === 'half') this.snapTo('full');
@@ -252,7 +250,16 @@ const MobileSheet = {
         if (this.state === 'full') this.snapTo('half');
         else if (this.state === 'half') this.snapTo('collapsed');
       }
-    });
+    };
+
+    for (const el of swipeTargets) {
+      el.addEventListener('touchstart', (e) => onStart(e.touches[0].clientY), { passive: true });
+      el.addEventListener('touchmove', (e) => onMove(e.touches[0].clientY), { passive: true });
+      el.addEventListener('touchend', onEnd);
+      el.addEventListener('mousedown', (e) => onStart(e.clientY));
+    }
+    document.addEventListener('mousemove', (e) => onMove(e.clientY));
+    document.addEventListener('mouseup', onEnd);
   },
 
   toggleToolbar() {

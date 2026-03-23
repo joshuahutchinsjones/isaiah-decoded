@@ -94,7 +94,9 @@
       </main>
       <div class="sidebar-resize-handle" id="sidebarResizeHandle"></div>
       <aside class="concordance-panel" id="concordancePanelAside">
-        <div class="mob-drag-handle" id="mobDragHandle"><div class="mob-drag-pill"></div></div>
+        <div class="mob-drag-handle" id="mobDragHandle">
+          <div class="mob-drag-pill"></div>
+        </div>
         <div class="sidebar-tabs">
           <button class="sidebar-tab active" data-panel="concordance" onclick="switchSidebarTab('concordance')">Concordance</button>
           <button class="sidebar-tab" data-panel="groups" onclick="switchSidebarTab('groups')">Groups</button>
@@ -177,11 +179,13 @@
     </div>
   </div>
 
+  <!-- Mobile floating close button (right side, just above panel) -->
+  <button id="mobFloatingClose" onclick="MobileSheet.snapTo('collapsed')" style="display:none;position:fixed;right:12px;z-index:600;width:44px;height:44px;border-radius:50%;background:#c62828;color:#fff;border:none;box-shadow:0 3px 12px rgba(0,0,0,0.3);cursor:pointer;font-size:1.3rem;align-items:center;justify-content:center;" title="Close panel">&times;</button>
+
   <!-- Mobile bottom bar -->
   <div id="mobileBottomBar" style="display:none;">
-    <button class="mob-bar-btn" onclick="MobileSheet.toggleToolbar()" title="Highlight tools">&#x1F3A8;</button>
     <button class="mob-bar-btn mob-bar-main" onclick="MobileSheet.snapTo('half')" title="Open study panel">&#9776; Study Tools</button>
-    <button class="mob-bar-btn" onclick="MobileSheet.toggleToolbar()" title="Legend">&#x1F50D;</button>
+    <button class="mob-bar-btn" onclick="MobileSheet.toggleToolbar()" title="Highlight & markup tools">&#x1F3A8; Mark Up</button>
   </div>
 
   <!-- Mobile toolbar overlay -->
