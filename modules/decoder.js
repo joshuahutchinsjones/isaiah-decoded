@@ -136,9 +136,35 @@ const Decoder = {
       'gathering': 'the return of scattered Israel to Zion'
     };
 
+    // 1. Load the manual overrides first (D&C 113, etc.)
     for (const [word, meaning] of Object.entries(directMap)) {
       if (!skip.has(word)) {
         this.builtinWords[word] = meaning;
+      }
+    }
+
+    // 2. Auto-populate from ALL CODE_WORDS entries (Gileadi's full dictionary)
+    // Only adds words NOT already in directMap (so D&C 113 overrides stay)
+    if (typeof CODE_WORDS !== 'undefined') {
+      for (const [key, entry] of Object.entries(CODE_WORDS)) {
+        // Get a short decoded phrase
+        let decoded = entry.decoded.split('—')[0].trim();
+        if (decoded.length > 60) decoded = decoded.split(',')[0].trim();
+        if (decoded.length > 60) decoded = decoded.substring(0, 57) + '...';
+
+        // Add the dictionary key itself
+        const primaryWord = key.replace(/-/g, '');
+        if (primaryWord.length > 2 && !skip.has(primaryWord) && !this.builtinWords[primaryWord]) {
+          this.builtinWords[primaryWord] = decoded;
+        }
+
+        // Also extract individual meaningful words from the term name
+        const termWords = entry.term.toLowerCase().replace(/[^a-z\s]/g, '').split(/\s+/);
+        for (const tw of termWords) {
+          if (tw.length > 3 && !skip.has(tw) && !this.builtinWords[tw]) {
+            this.builtinWords[tw] = decoded;
+          }
+        }
       }
     }
   },
@@ -239,6 +265,9 @@ const Decoder = {
       }
     }
 
+    html += `<div style="margin-top:0.8rem;padding-top:0.6rem;border-top:1px solid var(--border);">
+      <button onclick="Decoder.renderTab(this.closest('.sidebar-panel-content')?.querySelector('[id]')?.id || 'sidebarCodeWordsContent')" style="font-family:-apple-system,sans-serif;font-size:0.78rem;padding:0.35rem 0.7rem;border:1px solid var(--accent);border-radius:5px;background:none;color:var(--accent);cursor:pointer;">Show Full Dictionary (${Object.keys({...Decoder.builtinWords,...Decoder.customWords}).length} words)</button>
+    </div>`;
     html += '</div>';
     container.innerHTML = html;
   },
