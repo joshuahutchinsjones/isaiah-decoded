@@ -13,16 +13,16 @@ const Highlighter = {
   visible: true,     // toggle highlights on/off visually
 
   RUNG_COLORS: [
-    { key: 'sk-red',     color: '#E60000', label: 'Christ/Father',   icon: '\u2720' },  // cross — Christ, Father, Light of Christ, Word of God, Salvation
-    { key: 'sk-orange',  color: '#ED8A00', label: 'Women/Wisdom',    icon: '\u2640' },  // female sign — Women, Mother, Divine Feminine, Wisdom, Understanding
-    { key: 'sk-yellow',  color: '#D4B800', label: 'Time/Generic',    icon: '\u231B' },  // hourglass — Generic, Timing, Wilderness, Gentiles, Evidences
-    { key: 'sk-green',   color: '#228B22', label: 'Temple/Servant',  icon: '\u2618' },  // shamrock — Temple, Righteousness, Elias, Forerunner, Servant, Right Arm
-    { key: 'sk-ltblue',  color: '#5B9BD5', label: 'Evil/Wicked',     icon: '\u26A0' },  // warning — Evil, Bad, Curse, Sins, Iniquity, Wicked, Secret Combinations
-    { key: 'sk-dkblue',  color: '#1F4E79', label: 'Devil/Antichrist',icon: '\u{1F480}' }, // skull — Devil, Antichrist, Murder, Angels of Devil, Evil Spirits
-    { key: 'sk-purple',  color: '#7B2D8E', label: 'Angels/Kings',    icon: '\u{1F451}' }, // crown — Angels, Kings/Queens, Messengers, 144,000, Mysteries, Gifts
-    { key: 'sk-pink',    color: '#E75480', label: 'Holy Ghost',      icon: '\u{1F54A}' }, // dove — Holy Ghost, Holy Spirit of Promise, Spirit of Revelation
-    { key: 'sk-brown',   color: '#8B5E3C', label: 'Prophets/Earth',  icon: '\u{1F30D}' }, // globe — Prophets, Earth, Cities/Places, Groups of People, Records
-    { key: 'sk-grey',    color: '#808080', label: 'False Teachers',  icon: '\u{1F3AD}' }  // masks — False priests, false teachers, lukewarm, pharisees
+    { key: 'sk-red',     color: '#E60000', label: 'Christ',          icon: '\u2720',     desc: 'Christ, Father, Light of Christ, Word of God, Spirit of Prophecy, Salvation, Good, Bless' },
+    { key: 'sk-orange',  color: '#ED8A00', label: 'Women',           icon: '\u2640',     desc: 'Women, Mother, Divine Feminine, Wisdom, Understanding' },
+    { key: 'sk-yellow',  color: '#D4B800', label: 'Time',            icon: '\u231B',     desc: 'Generic, Timing, Time, Wilderness, Gentiles, Evidences' },
+    { key: 'sk-green',   color: '#228B22', label: 'Temple',          icon: '\u2618',     desc: 'Temple, Righteousness, Elias, Forerunner, Servant, Right Arm/Hand' },
+    { key: 'sk-ltblue',  color: '#5B9BD5', label: 'Evil',            icon: '\u26A0',     desc: 'Evil, Bad, Curse, Sins, Iniquity, Wicked, Secret Combinations' },
+    { key: 'sk-dkblue',  color: '#1F4E79', label: 'Devil',           icon: '\u{1F480}',  desc: 'Devil, Antichrist, Murder, Angels of Devil, Evil Spirits, Left Arm/Hand' },
+    { key: 'sk-purple',  color: '#7B2D8E', label: 'Angels',          icon: '\u{1F451}',  desc: 'Angels, Kings/Queens, Messengers, 144,000, Mysteries, Gifts, Godliness' },
+    { key: 'sk-pink',    color: '#E75480', label: 'Holy Ghost',      icon: '\u{1F54A}',  desc: 'Holy Ghost, Holy Spirit, Holy Spirit of Promise, Spirit of Revelation' },
+    { key: 'sk-brown',   color: '#8B5E3C', label: 'Prophets',        icon: '\u{1F30D}',  desc: 'Prophets, Earth, Cities/Places, Groups of People, Men/Women, Records' },
+    { key: 'sk-grey',    color: '#808080', label: 'False Teachers',  icon: '\u{1F3AD}',  desc: 'False priests, false teachers, lukewarm, pharisees, false professors of religion' }
   ],
 
   DEFAULT_CUSTOM: [
@@ -76,7 +76,8 @@ const Highlighter = {
     html += '<div class="hl-row hl-row-colors">';
     for (const c of this.RUNG_COLORS) {
       const shortLabel = c.label.length > 8 ? c.label.slice(0, 7) + '.' : c.label;
-      html += `<button class="hl-btn" data-key="${c.key}" data-color="${c.color}" title="${c.label}" style="--btn-color:${c.color}"><span class="hl-rung-icon">${c.icon}</span><span class="hl-rung-label">${shortLabel}</span></button>`;
+      const tooltip = c.desc ? `${c.label}: ${c.desc}` : c.label;
+      html += `<button class="hl-btn" data-key="${c.key}" data-color="${c.color}" title="${tooltip}" style="--btn-color:${c.color}"><span class="hl-rung-icon">${c.icon}</span><span class="hl-rung-label">${shortLabel}</span></button>`;
     }
     html += '<span class="hl-divider"></span>';
     for (const c of this.DEFAULT_CUSTOM) {
