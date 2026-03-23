@@ -136,6 +136,50 @@ function showKeysSection(section) {
 
 // ===== SIDEBAR TAB SWITCHING =====
 
+// ===== MOBILE SIDEBAR =====
+
+// Show/hide mobile button based on screen width
+function checkMobileButton() {
+  const btn = document.getElementById('mobileSidebarBtn');
+  if (!btn) return;
+  if (window.innerWidth <= 850) {
+    btn.style.display = 'flex';
+  } else {
+    btn.style.display = 'none';
+    // Also close mobile sidebar if open
+    const panel = document.getElementById('concordancePanelAside');
+    if (panel) panel.classList.remove('mobile-open');
+  }
+}
+window.addEventListener('resize', checkMobileButton);
+document.addEventListener('DOMContentLoaded', () => setTimeout(checkMobileButton, 100));
+
+function toggleMobileSidebar() {
+  const panel = document.getElementById('concordancePanelAside');
+  const btn = document.getElementById('mobileSidebarBtn');
+  if (!panel) return;
+
+  const isOpen = panel.classList.contains('mobile-open');
+  panel.classList.toggle('mobile-open', !isOpen);
+  if (btn) {
+    btn.classList.toggle('open', !isOpen);
+    btn.innerHTML = isOpen ? '&#9776;' : '&times;';
+    btn.title = isOpen ? 'Open sidebar' : 'Close sidebar';
+  }
+}
+
+// Auto-open sidebar on word click in mobile
+function openMobileSidebarIfNeeded() {
+  if (window.innerWidth <= 850) {
+    const panel = document.getElementById('concordancePanelAside');
+    const btn = document.getElementById('mobileSidebarBtn');
+    if (panel && !panel.classList.contains('mobile-open')) {
+      panel.classList.add('mobile-open');
+      if (btn) { btn.classList.add('open'); btn.innerHTML = '&times;'; }
+    }
+  }
+}
+
 // ===== HOW TO READ ISAIAH =====
 
 function renderHowToReadIsaiah(containerId) {

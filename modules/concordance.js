@@ -399,6 +399,9 @@ const Concordance = {
     this.highlightWord(word);
     this.showResults(word);
 
+    // Open mobile sidebar to show results
+    if (typeof openMobileSidebarIfNeeded === 'function') openMobileSidebarIfNeeded();
+
     // Check for code word
     if (typeof CodeOverlay !== 'undefined') {
       CodeOverlay.check(word);
@@ -490,6 +493,7 @@ const Concordance = {
   },
 
   showCrossRefs(chapter, verse) {
+    if (typeof openMobileSidebarIfNeeded === 'function') openMobileSidebarIfNeeded();
     if (typeof CROSS_REFERENCES === 'undefined') return;
     const key = `${chapter}:${verse}`;
     const refs = CROSS_REFERENCES[key];
