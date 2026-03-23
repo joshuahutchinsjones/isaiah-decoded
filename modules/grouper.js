@@ -103,9 +103,56 @@ const Grouper = {
     };
     this.groups.push(group);
     this.activeGroupId = group.id;
+    this.active = true;
     this.save();
     if (input) input.value = '';
     this.renderPanel();
+    this.showSelectMode(group);
+  },
+
+  // Show a banner telling user to select words, with a Done button
+  showSelectMode(group) {
+    // Remove any existing banner
+    this.hideSelectMode();
+    const banner = document.createElement('div');
+    banner.id = 'gpSelectBanner';
+    banner.className = 'gp-select-banner';
+    banner.style.borderColor = group.color;
+    banner.innerHTML = `
+      <span class="gp-select-text">Tap words to add to <strong>${group.name}</strong></span>
+      <button class="gp-select-done" onclick="Grouper.finishGrouping()">Done</button>
+    `;
+    const readingPanel = document.getElementById('readingPanel');
+    if (readingPanel) readingPanel.insertBefore(banner, readingPanel.firstChild);
+
+    // On mobile, close the panel so user can see the text
+    if (window.innerWidth <= 850 && typeof MobileSheet !== 'undefined') {
+      MobileSheet.snapTo('collapsed');
+    }
+  },
+
+  hideSelectMode() {
+    const banner = document.getElementById('gpSelectBanner');
+    if (banner) banner.remove();
+  },
+
+  finishGrouping() {
+    this.hideSelectMode();
+    const group = this.groups.find(g => g.id === this.activeGroupId);
+    if (group && group.words.length === 0) {
+      // No words added — remove empty group
+      this.groups = this.groups.filter(g => g.id !== this.activeGroupId);
+    }
+    this.save();
+    this.renderPanel();
+    // Show the group lines
+    if (this.activeGroupId && this.visible) {
+      Concordance.showChapter(Concordance.currentChapter);
+      setTimeout(() => {
+        this.highlightGroupWords(this.activeGroupId);
+        this.showGroupLines(this.activeGroupId);
+      }, 100);
+    }
   },
 
   selectGroup(id) {
@@ -495,37 +542,34 @@ const Grouper = {
 
     el.style.cursor = 'grab';
 
-    el.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    const onStart = (x, y) => {
       isDragging = true;
       el.style.cursor = 'grabbing';
-      startX = e.clientX;
-      startY = e.clientY;
+      startX = x;
+      startY = y;
       startLeft = parseInt(el.style.left) || 0;
       startTop = parseInt(el.style.top) || 0;
-    });
-
-    document.addEventListener('mousemove', (e) => {
+    };
+    const onMove = (x, y) => {
       if (!isDragging) return;
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      el.style.left = (startLeft + dx) + 'px';
-      el.style.top = (startTop + dy) + 'px';
+      el.style.left = (startLeft + (x - startX)) + 'px';
+      el.style.top = (startTop + (y - startY)) + 'px';
       el.dataset.dragged = 'true';
+      if (this.activeGroupId === groupId) this.redrawLines(groupId);
+    };
+    const onEnd = () => {
+      if (isDragging) { isDragging = false; el.style.cursor = 'grab'; }
+    };
 
-      // Redraw lines to follow the label
-      if (this.activeGroupId === groupId) {
-        this.redrawLines(groupId);
-      }
-    });
+    // Mouse
+    el.addEventListener('mousedown', (e) => { e.preventDefault(); e.stopPropagation(); onStart(e.clientX, e.clientY); });
+    document.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
+    document.addEventListener('mouseup', onEnd);
 
-    document.addEventListener('mouseup', () => {
-      if (isDragging) {
-        isDragging = false;
-        el.style.cursor = 'grab';
-      }
-    });
+    // Touch
+    el.addEventListener('touchstart', (e) => { e.stopPropagation(); onStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+    document.addEventListener('touchmove', (e) => { if (isDragging) onMove(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+    document.addEventListener('touchend', onEnd);
   },
 
   // Redraw just the SVG lines for a group (without repositioning the label)

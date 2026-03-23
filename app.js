@@ -262,11 +262,34 @@ const MobileSheet = {
     document.addEventListener('mouseup', onEnd);
   },
 
+  // Open a specific sidebar tab (auto-closes toolbar if open)
+  openTab(tabName) {
+    // Close toolbar if open
+    if (this.toolbarOpen) {
+      this.toolbarOpen = false;
+      const toolbar = document.getElementById('highlightToolbar');
+      if (toolbar) toolbar.classList.remove('mob-toolbar-open');
+    }
+    // Open panel to half if collapsed
+    if (this.state === 'collapsed') this.snapTo('half');
+    // Switch to the tab
+    switchSidebarTab(tabName);
+  },
+
   toggleToolbar() {
+    // Close panel if open
+    if (this.state !== 'collapsed') {
+      this.snapTo('collapsed');
+    }
     const toolbar = document.getElementById('highlightToolbar');
     if (!toolbar) return;
     this.toolbarOpen = !this.toolbarOpen;
     toolbar.classList.toggle('mob-toolbar-open', this.toolbarOpen);
+    // Update button style
+    const btn = document.getElementById('mobMarkupBtn');
+    if (btn) {
+      btn.style.background = this.toolbarOpen ? 'rgba(255,255,255,0.3)' : '';
+    }
   }
 };
 
