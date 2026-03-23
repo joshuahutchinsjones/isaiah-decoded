@@ -15,12 +15,12 @@ const Cloud = {
      Free at https://console.firebase.google.com
      ─────────────────────────────────────────────────── */
   FIREBASE_CONFIG: {
-    apiKey: "AIzaSyDOCAbC123dEf456GhI789jKl012-MnO",
-    authDomain: "glowup-wellness.firebaseapp.com",
-    projectId: "glowup-wellness",
-    storageBucket: "glowup-wellness.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abc123def456ghi789"
+    apiKey: "AIzaSyDDU5i0fJISwrDzPAu2mqD8Wrk9AAgnv0I",
+    authDomain: "glowup-aubree.firebaseapp.com",
+    projectId: "glowup-aubree",
+    storageBucket: "glowup-aubree.firebasestorage.app",
+    messagingSenderId: "985029231488",
+    appId: "1:985029231488:web:6f02c091630d239c3df765"
   },
 
   /* ── INIT ─────────────────────────────────────────── */
