@@ -59,6 +59,16 @@ body {
   text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+.sync-status {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  margin-top: 2px;
+}
+.sync-status.synced { color: rgba(255,255,255,0.8); }
+.sync-status.syncing { color: var(--gold-light); }
+.sync-status.error { color: #ffaaaa; }
+
 .app-header .subtitle {
   color: rgba(255,255,255,0.85);
   font-size: 11px;

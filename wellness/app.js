@@ -26,27 +26,32 @@ const App = {
 
   /* ── INIT ──────────────────────────────────────────── */
 
-  init() {
-    this.loadState();
+  async init() {
+    // Init cloud first, then load state
+    await Cloud.init();
+    await this.loadState();
     this.bindTabs();
     this.bindModal();
     this.renderCurrentTab();
   },
 
-  loadState() {
+  async loadState() {
     try {
-      const saved = localStorage.getItem('glowup_state');
+      const saved = await Cloud.load();
       if (saved) {
-        const parsed = JSON.parse(saved);
-        Object.assign(this.state, parsed);
+        Object.assign(this.state, saved);
       }
-    } catch (e) { /* fresh start */ }
+    } catch (e) {
+      // Fallback to raw localStorage
+      try {
+        const local = localStorage.getItem('glowup_state');
+        if (local) Object.assign(this.state, JSON.parse(local));
+      } catch (e2) { /* fresh start */ }
+    }
   },
 
   saveState() {
-    try {
-      localStorage.setItem('glowup_state', JSON.stringify(this.state));
-    } catch (e) { /* quota */ }
+    Cloud.save(this.state);
   },
 
   /* ── TAB ROUTING ───────────────────────────────────── */
