@@ -604,6 +604,7 @@ function switchSidebarTab(panel) {
   }
 
   if (panel === 'codewords' && typeof Decoder !== 'undefined') {
-    Decoder.renderTab('sidebarCodeWordsContent');
+    // Show chapter-specific code word suggestions instead of full list
+    Decoder.showChapterCodeWords();
   }
 }

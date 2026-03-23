@@ -141,6 +141,55 @@ const Decoder = {
     }
   },
 
+  // Show code words found in the current chapter — called from Code Words tab
+  showChapterCodeWords() {
+    const chapterNum = (typeof Concordance !== 'undefined') ? Concordance.currentChapter : 1;
+    if (typeof ISAIAH_EMBEDDED_DATA === 'undefined') return;
+
+    const chapter = ISAIAH_EMBEDDED_DATA[String(chapterNum)];
+    if (!chapter) return;
+
+    const allText = Object.values(chapter).join(' ').toLowerCase();
+    const wordsInChapter = new Set(allText.replace(/[^a-z'\-\s]/g, '').split(/\s+/).filter(w => w.length > 2));
+
+    const found = [];
+    const allSubs = { ...this.builtinWords, ...this.customWords };
+    for (const [word, decoded] of Object.entries(allSubs)) {
+      if (this.disabledWords[word]) continue;
+      if (wordsInChapter.has(word)) {
+        const entry = this.findCodeEntry(word);
+        found.push({ word, decoded, entry });
+      }
+    }
+
+    found.sort((a, b) => a.word.localeCompare(b.word));
+
+    const container = document.getElementById('sidebarCodeWordsContent') || document.getElementById('codeWordsTabContent');
+    if (!container) return;
+
+    let html = `<div style="padding:0.6rem 0.8rem;">
+      <h3 style="font-family:-apple-system,sans-serif;font-size:0.95rem;color:var(--accent);margin-bottom:0.3rem;">Code Words in Isaiah ${chapterNum}</h3>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.6rem;line-height:1.5;">These words in this chapter have deeper symbolic meanings. Tap any to look up its concordance across all of Isaiah.</p>`;
+
+    if (found.length === 0) {
+      html += '<p style="color:var(--text-muted);font-size:0.82rem;">No code words found in this chapter.</p>';
+    } else {
+      for (const f of found) {
+        html += `<div class="decode-suggestion" onclick="switchSidebarTab('concordance');Concordance.lookupWord('${f.word}')">`;
+        html += `<span class="ds-word">${f.word}</span>`;
+        html += `<span class="ds-arrow">&rarr;</span>`;
+        html += `<span class="ds-decoded">${f.decoded}</span>`;
+        if (f.entry && f.entry.keyVerses) {
+          html += `<span class="ds-count">${f.entry.keyVerses.length} key verses</span>`;
+        }
+        html += '</div>';
+      }
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+  },
+
   // Called by concordance renderPlainVerse — wraps decoded words with tooltip
   decorateWord(wordSpan) {
     if (!this.active) return;

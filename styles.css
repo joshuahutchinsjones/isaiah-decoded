@@ -515,6 +515,15 @@ body.dark-mode .hl-decode-btn:hover { background: #3a2000; }
 .word.decoded-word { background: #fff3e0; border-bottom: 2px solid #ff6f00; border-radius: 2px; padding: 0 2px; font-style: italic; color: #e65100; }
 body.dark-mode .word.decoded-word { background: #3a2000; color: #ffb74d; }
 
+/* Decode chapter suggestions */
+.decode-suggestion { display: flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s; flex-wrap: wrap; }
+.decode-suggestion:hover { background: var(--bg-hover); }
+.decode-suggestion:last-child { border-bottom: none; }
+.ds-word { font-weight: 700; color: #ff6f00; font-size: 0.85rem; }
+.ds-arrow { color: var(--text-muted); font-size: 0.7rem; }
+.ds-decoded { font-size: 0.8rem; color: var(--text); flex: 1; }
+.ds-count { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; font-size: 0.6rem; color: var(--text-muted); background: var(--bg-nav); padding: 0.1rem 0.3rem; border-radius: 3px; }
+
 /* Group mode button */
 .hl-group-btn { border-color: #9b59b6 !important; }
 .hl-group-btn.active { background: #9b59b6 !important; color: #fff !important; border-color: #9b59b6 !important; }
